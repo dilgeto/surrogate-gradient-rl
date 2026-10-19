@@ -21,6 +21,13 @@ cd "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 [ -f .venv/bin/activate ] && . .venv/bin/activate
 mkdir -p optuna/logs
 
+# Falla pronto y con un mensaje claro, en vez de lanzar 0 procesos o morir dentro de los logs.
+if ! [[ "$WORKERS" =~ ^[1-9][0-9]*$ ]]; then
+  echo "!! WORKERS debe ser un entero >= 1 (vale '$WORKERS'). OJO: nproc obedece OMP_NUM_THREADS; usa nproc --all" >&2
+  exit 1
+fi
+python -c "import optuna" 2>/dev/null || { echo "!! no se puede importar optuna con $(command -v python); ejecuta: python -c 'import optuna'" >&2; exit 1; }
+
 # run_phase <estudio> <fase> <trials totales> <flags base...>
 # Lanza WORKERS procesos con el mismo estudio y espera a que acaben. --n-trials es por proceso.
 run_phase() {
