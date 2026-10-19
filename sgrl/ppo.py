@@ -18,7 +18,7 @@ from typing import Callable, Optional
 import numpy as np
 import torch
 
-from .envs import VecEnv
+from .envs import POTENTIALS, VecEnv
 from .policy import ActorCritic
 
 
@@ -42,6 +42,10 @@ class PPOConfig:
     normalize_reward: bool = True
     clip_obs: float = 10.0
     global_grad_clip: bool = False    # True: una sola norma sobre actor+crítico (como SB3)
+    # Escala del reward shaping basado en potencial, como en wann-cpp: a la recompensa de ENTRENAMIENTO se
+    # suma escala·(φ(s') - φ(s)) (sin descuento). Los retornos de evaluación y de los logs siguen siendo los
+    # originales del entorno. 0 = sin shaping. Sólo Acrobot y MountainCarDiscrete tienen potencial.
+    reward_shaping: float = 0.0
 
     @classmethod
     def sb3(cls, **overrides) -> "PPOConfig":
@@ -129,6 +133,8 @@ class PPO:
             [{"params": self.actor_params, "lr": cfg.actor_lr}, {"params": agent.critic.parameters(), "lr": cfg.critic_lr}],
             eps=1e-5,
         )
+        if cfg.reward_shaping and env.potential(np.zeros((1, env.obs_dim))) is None:
+            raise ValueError(f"{env.name} no define potencial: no admite reward_shaping (sólo {sorted(POTENTIALS)})")
         self.norm = Normalizer(env.obs_dim, cfg.clip_obs, cfg.normalize_obs, env.n_agents)
         self.ret_rms = RunningMeanStd()
         self._disc_ret = np.zeros(env.num_envs)
@@ -162,6 +168,8 @@ class PPO:
             act_np = act.cpu().numpy()
             obs, rew, term, trunc, final_obs, finished = self.env.step(act_np.astype(np.float64))
             done = term | trunc
+            if c.reward_shaping:  # sólo lo ve el aprendizaje; `finished` (retornos reportados) sigue siendo el original
+                rew = rew + c.reward_shaping * (self.env.potential(final_obs) - self.env.potential(self.obs))
             rew_s = self._scale_reward(rew, done).astype(np.float32)
             if trunc.any():  # bootstrap del valor en cortes por tiempo
                 idx = np.flatnonzero(trunc)

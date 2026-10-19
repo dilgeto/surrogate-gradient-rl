@@ -3,6 +3,8 @@
 Tareas del proyecto (`TASKS`): Acrobot, MountainCarDiscrete, CarTrack (coche de carreras),
 Bottleneck (5 agentes) y BipedalWalker. Además quedan Pendulum, AcrobotSwingup,
 MountainCarContinuous y BipedalWalkerHardcore.
+
+Acrobot, MountainCarDiscrete y CarTrack tienen exactamente los parámetros de wann-cpp (ver csrc/rlt_envs.cpp).
 """
 from __future__ import annotations
 
@@ -17,9 +19,18 @@ TASKS = ("Acrobot", "MountainCarDiscrete", "CarTrack", "Bottleneck", "BipedalWal
 ENV_NAMES = (*TASKS, "Pendulum", "AcrobotSwingup", "MountainCarContinuous", "BipedalWalkerHardcore")
 
 # Mountain Car en RLTools es sólo continuo (fuerza en [-1, 1]). La versión discreta es un
-# adaptador: acción k in {0, 1, 2} -> fuerza k-1 (izquierda, nada, derecha) sobre la misma
-# dinámica y la misma recompensa (-0.1·fuerza² por paso, +100 en la meta).
-_DISCRETE = {"MountainCarDiscrete": ("MountainCarContinuous", 3)}
+# adaptador: acción k in {0, 1, 2} -> fuerza k-1 (izquierda, nada, derecha). El entorno "MountainCarDiscrete"
+# de _rlt_envs es el de wann-cpp (MountainCar-v0 de Gymnasium: power 0.001, meta 0.5, -1 por paso, 200 pasos).
+_DISCRETE = {"MountainCarDiscrete": ("MountainCarDiscrete", 3)}
+
+
+# Potenciales φ(s) para el reward shaping de entrenamiento (los mismos que wann-cpp, calculados desde la
+# observación). Acrobot: altura de la punta, -cos θ1 - cos(θ1+θ2), con obs = (cos θ1, sin θ1, cos θ2, sin θ2, ...).
+# MountainCarDiscrete: sin(3·posición), con obs = (posición, velocidad). CarTrack no tiene (wann-cpp tampoco).
+POTENTIALS = {
+    "Acrobot": lambda o: -o[:, 0] - (o[:, 0] * o[:, 2] - o[:, 1] * o[:, 3]),
+    "MountainCarDiscrete": lambda o: np.sin(3.0 * o[:, 0]),
+}
 
 
 class VecEnv:
@@ -47,6 +58,11 @@ class VecEnv:
         self.episode_step_limit = self._env.episode_step_limit
         self._ret = np.zeros(num_envs)
         self._len = np.zeros(num_envs, dtype=np.int64)
+
+    def potential(self, obs: np.ndarray):
+        """φ(s) de cada entorno a partir de su observación, o None si la tarea no define potencial."""
+        fn = POTENTIALS.get(self.name)
+        return None if fn is None else fn(np.asarray(obs, dtype=np.float64))
 
     def reset(self, seed: int | None = None) -> np.ndarray:
         self._ret[:] = 0

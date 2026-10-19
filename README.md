@@ -15,6 +15,17 @@ Entrenamiento por **gradientes surrogados** de políticas espiguiformes **LIF**
   en un solo objeto, autoreset, OpenMP opcional. Disponibles: `Pendulum`, `Acrobot`,
   `AcrobotSwingup`, `MountainCarContinuous`, `BipedalWalker`, `BipedalWalkerHardcore`
   (los dos últimos son el port sin Box2D de `snn-simulator/include/rl/environments`).
+  `Acrobot`, `MountainCarDiscrete` y `CarTrack` son **exactamente** los de `../wann-cpp` para que los
+  resultados de los dos repos sean comparables: Acrobot con torque ±1 (RLTools usa ±5), MountainCar como
+  MountainCar-v0 de Gymnasium (fuerza 0.001, meta 0.5, -1 por paso, 200 pasos) y la pista del coche con
+  celdas de 50 mm (5 x 5 m). `tests/test_wann_envs.py` fija sus trayectorias de referencia.
+* **Reward shaping** (opcional, `--reward-shaping ESCALA`, 0 por defecto): el mismo shaping basado en potencial
+  que wann-cpp usa para entrenar, `escala·(φ(s') - φ(s))` sin descuento, con φ = altura de la punta en Acrobot y
+  sin(3·posición) en MountainCarDiscrete (wann-cpp: escala 10 en ambas; CarTrack no tiene y el flag falla).
+  Sólo cambia la recompensa que ve el aprendizaje: los retornos de evaluación, los logs y la puntuación de
+  Optuna son siempre los originales del entorno. Para igualar la señal de entrenamiento de wann-cpp:
+  `python -m sgrl.train --env Acrobot --reward-shaping 10 ...` o `scripts/optuna_acrobot.sh --reward-shaping 10`.
+  (`scripts/sb3_baseline.py` no lo aplica.)
 * **Algoritmo**: PPO propio (`sgrl/ppo.py`) en PyTorch. RLTools aporta los entornos; su PPO
   usa sus propias redes en C++ y no admite una SNN. El crítico es un MLP analógico y digital
   (sin ruido: sólo el actor se despliega).

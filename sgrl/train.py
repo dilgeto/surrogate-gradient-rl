@@ -62,6 +62,9 @@ def build_parser() -> argparse.ArgumentParser:
     g.add_argument("--ent-coef", type=float, default=d.ent_coef)
     g.add_argument("--target-kl", type=float, default=d.target_kl)
     g.add_argument("--no-anneal-lr", action="store_true")
+    g.add_argument("--reward-shaping", type=float, default=d.reward_shaping,
+                   help="escala del shaping basado en potencial de wann-cpp (Acrobot, MountainCarDiscrete; wann-cpp usa 10). "
+                        "Sólo afecta al entrenamiento: los retornos reportados son los originales. 0 = sin shaping")
     g.add_argument("--init-std", type=float, default=0.5)
     g.add_argument("--sb3", action="store_true",
                    help="hiperparámetros por defecto de SB3 PPO (minilote 64, 10 épocas, LR único, sin target_kl/"
@@ -102,7 +105,7 @@ def build(a: argparse.Namespace):
     cfg = PPOConfig(num_envs=a.num_envs, rollout_steps=a.rollout_steps, minibatch_size=a.minibatch,
                     epochs=a.epochs, gamma=a.gamma, gae_lambda=a.gae_lambda, actor_lr=a.actor_lr,
                     critic_lr=a.critic_lr, ent_coef=a.ent_coef, target_kl=a.target_kl or None,
-                    anneal_lr=not a.no_anneal_lr, global_grad_clip=a.sb3)
+                    anneal_lr=not a.no_anneal_lr, global_grad_clip=a.sb3, reward_shaping=a.reward_shaping)
     ppo = PPO(agent, env, cfg, a.device)
     return env, agent, ppo, cfg, snn_kwargs
 

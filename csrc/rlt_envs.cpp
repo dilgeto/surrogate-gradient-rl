@@ -49,7 +49,9 @@ public:
     virtual TI n_agents() const = 0;
 };
 
-template <typename ENV>
+// LIMIT (> 0) sustituye al EPISODE_STEP_LIMIT del entorno de RLTools; REWARD_SHIFT se suma a la recompensa
+// de cada paso. Sólo los usa MountainCarDiscrete (200 pasos y -1 por paso, como en wann-cpp).
+template <typename ENV, TI LIMIT = 0, int REWARD_SHIFT = 0>
 class VecEnv : public VecEnvBase {
 public:
     static constexpr TI OBS_DIM = ENV::Observation::DIM;
@@ -62,7 +64,7 @@ public:
     using ActMatrix = rlt::Matrix<rlt::matrix::Specification<T, TI, 1, ACT_DIM, false>>;
 
     VecEnv(TI n, unsigned seed, int threads, TI max_steps) : n_(n), threads_(threads), inst_(n) {
-        max_steps_ = max_steps > 0 ? max_steps : DEFAULT_LIMIT;
+        max_steps_ = max_steps > 0 ? max_steps : (LIMIT > 0 ? LIMIT : DEFAULT_LIMIT);
         for (TI i = 0; i < n_; i++) {
             rlt::init(inst_[i].device, inst_[i].rng, seed + static_cast<unsigned>(i));
             rlt::init(inst_[i].device, inst_[i].env);
@@ -103,7 +105,7 @@ public:
                 for (TI k = 0; k < ACT_DIM; k++) rlt::set(act, 0, k, a[i * ACT_DIM + k]);
                 typename ENV::State next;
                 rlt::step(s.device, s.env, s.params, s.state, act, next, s.rng);
-                r[i] = rlt::reward(s.device, s.env, s.params, s.state, act, next, s.rng);
+                r[i] = rlt::reward(s.device, s.env, s.params, s.state, act, next, s.rng) + REWARD_SHIFT;
                 s.state = next;
                 s.steps++;
                 te[i] = rlt::terminated(s.device, s.env, s.params, s.state, s.rng);
@@ -157,8 +159,36 @@ private:
 using PendulumSpec = rlt::rl::environments::pendulum::Specification<T, TI>;
 using AcrobotSpec = rlt::rl::environments::acrobot::Specification<T, TI>;
 using MountainCarSpec = rlt::rl::environments::mountain_car::Specification<T, TI>;
-// Pista por defecto de RLTools (100x100 celdas de 20 mm), la misma que usa su ejemplo de PPO.
-using CarTrackSpec = rlt::rl::environments::car::SpecificationTrack<T, TI, 100, 100, 20>;
+
+// Las tres tareas (Acrobot, MountainCarDiscrete, CarTrack) deben ser EXACTAMENTE las de wann-cpp, o los
+// resultados de los dos repos no son comparables. Copiado de wann-cpp/src/{SnnAcrobotTask,SnnDiscMCTask,
+// SnnCarTask}.cpp; tests/test_wann_envs.py fija trayectorias de referencia generadas con esos archivos.
+//  Acrobot: torque ±1 N·m, escala de Gymnasium (RLTools usa ±5 por defecto). Mismo límite de 500 pasos.
+struct GymAcrobotParams : rlt::rl::environments::acrobot::DefaultParameters<T> {
+    static constexpr T MIN_TORQUE = -1.0;
+    static constexpr T MAX_TORQUE = +1.0;
+};
+using GymAcrobotSpec = rlt::rl::environments::acrobot::Specification<T, TI, GymAcrobotParams>;
+//  MountainCarDiscrete: MountainCar-v0 de Gymnasium. Fuerza {-1, 0, 1} * power, meta en 0.5, sin coste de
+//  acción ni bonus de meta; la recompensa es -1 por paso (REWARD_SHIFT) y el episodio dura 200 pasos.
+struct DiscMCParams {
+    static constexpr T min_action = -1.0;
+    static constexpr T max_action = 1.0;
+    static constexpr T min_position = -1.2;
+    static constexpr T max_position = 0.6;
+    static constexpr T max_speed = 0.07;
+    static constexpr T power = 0.001;
+    static constexpr T goal_position = 0.5;
+    static constexpr T goal_velocity = 0.0;
+    static constexpr T action_cost = 0.0;
+    static constexpr T goal_reward = 0.0;
+    static constexpr T initial_position_min = -0.6;
+    static constexpr T initial_position_max = -0.4;
+};
+using DiscMCSpec = rlt::rl::environments::mountain_car::Specification<T, TI, DiscMCParams>;
+static constexpr TI MC_DISCRETE_STEPS = 200;
+//  CarTrack: pista de 100x100 celdas de 50 mm (arena de 5 x 5 m), 1000 pasos.
+using CarTrackSpec = rlt::rl::environments::car::SpecificationTrack<T, TI, 100, 100, 50>;
 
 // Bottleneck con los parámetros del zoo de RLTools (src/rl/zoo/bottleneck-v0/environment.h).
 struct BottleneckParameters : rlt::rl::environments::multi_agent::bottleneck::DefaultParameters<T, TI> {
@@ -179,10 +209,12 @@ using BottleneckSpec = rlt::rl::environments::multi_agent::bottleneck::Specifica
 std::unique_ptr<VecEnvBase> make(const std::string& name, TI n, unsigned seed, int threads, TI max_steps) {
     namespace E = rlt::rl::environments;
     if (name == "Pendulum") return std::make_unique<VecEnv<E::Pendulum<PendulumSpec>>>(n, seed, threads, max_steps);
-    if (name == "Acrobot") return std::make_unique<VecEnv<E::Acrobot<AcrobotSpec>>>(n, seed, threads, max_steps);
+    if (name == "Acrobot") return std::make_unique<VecEnv<E::Acrobot<GymAcrobotSpec>>>(n, seed, threads, max_steps);
     if (name == "AcrobotSwingup") return std::make_unique<VecEnv<E::AcrobotSwingup<AcrobotSpec>>>(n, seed, threads, max_steps);
     if (name == "MountainCarContinuous")
         return std::make_unique<VecEnv<E::MountainCarContinuous<MountainCarSpec>>>(n, seed, threads, max_steps);
+    if (name == "MountainCarDiscrete")
+        return std::make_unique<VecEnv<E::MountainCarContinuous<DiscMCSpec>, MC_DISCRETE_STEPS, -1>>(n, seed, threads, max_steps);
     if (name == "CarTrack") return std::make_unique<VecEnv<E::CarTrack<CarTrackSpec>>>(n, seed, threads, max_steps);
     if (name == "Bottleneck")
         return std::make_unique<VecEnv<E::multi_agent::Bottleneck<BottleneckSpec>>>(n, seed, threads, max_steps);

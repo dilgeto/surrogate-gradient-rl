@@ -8,7 +8,8 @@ Cualquier flag explícito en la línea de comandos tiene prioridad.
 PRESETS = {
     "Acrobot": dict(steps=1_000_000, gamma=0.99, epochs=10, minibatch=512, actor_lr=1e-3,
                     num_envs=16, rollout_steps=128),
-    # Recompensa dispersa (+100 en la meta): algo de entropía ayuda a descubrir la meta.
+    # Recompensa -1 por paso hasta llegar a la meta (episodios de 200 pasos): algo de entropía ayuda a
+    # descubrir la meta.
     "MountainCarDiscrete": dict(steps=1_000_000, gamma=0.99, epochs=10, minibatch=512, actor_lr=1e-3,
                                 ent_coef=0.02, num_envs=16, rollout_steps=256),
     "CarTrack": dict(steps=2_000_000, gamma=0.99, epochs=10, minibatch=1024, actor_lr=5e-4,
