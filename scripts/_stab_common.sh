@@ -3,14 +3,14 @@
 # scripts/plateau.py para ver en qué paso se estabiliza la curva de evaluación.
 #
 # Variables de entorno (todas opcionales):
-#   DEVICE    cuda | cpu | cuda:N (def. cuda)       SEEDS   semillas separadas por espacios (def. "0 1 2")
+#   DEVICE    cpu | cuda | cuda:N (def. cpu)        SEEDS   semillas separadas por espacios (def. "0 1 2")
 #   STEPS     pasos por corrida (def. el de la tarea) SHAPING escala de --reward-shaping (def. 10 en Acrobot y
 #                                                      MountainCar, como wann-cpp; 0 = sin shaping)
 #   EVAL_EVERY iteraciones entre evaluaciones (def. ~50k pasos)   EVAL_EPISODES episodios por evaluación (def. 20)
 #   OUT       directorio de resultados (def. runs)  THREADS hilos de torch por proceso (def. 1)
 # Los argumentos del script se añaden a los flags de sgrl.train (y ganan).
 
-DEVICE="${DEVICE:-cuda}"
+DEVICE="${DEVICE:-cpu}"
 SEEDS="${SEEDS:-0 1 2}"
 EVAL_EPISODES="${EVAL_EPISODES:-20}"
 OUT="${OUT:-runs}"

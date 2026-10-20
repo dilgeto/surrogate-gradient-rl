@@ -1,20 +1,26 @@
 # Funciones comunes de optuna_acrobot.sh, optuna_mountaincar.sh y optuna_carrace.sh (se cargan con `source`).
 #
 # Variables de entorno (todas opcionales):
-#   WORKERS   procesos que comparten el estudio (def. 2; con la RTX 2050 no pases de ~3)
+#   WORKERS   trials simultáneos (procesos que comparten el estudio; def. 4, ver nota abajo)
 #   TRIALS1   trials totales de la fase 1 (def. 50)      TRIALS2   trials totales de la fase 2 (def. 40)
-#   DEVICE    cpu | cuda | cuda:N (def. cuda)            THREADS   hilos de torch por proceso (def. 1)
+#   DEVICE    cpu | cuda | cuda:N (def. cpu)             THREADS   hilos de torch por proceso (def. 1)
 #   STUDY     prefijo de los estudios (def. el de la tarea): <STUDY>-f1 y <STUDY>-f2
 #   VALIDATE  K > 0: al final reentrena el top K de la fase 2 con 11 semillas nuevas (def. 0)
+#   JOBS      corridas de validación simultáneas (def. 0 = el máximo que cabe: núcleos y RAM libre)
 #   AIM_REPO  repositorio de Aim (aim://host:53800 o ruta local); si se omite no se usa Aim. Hace falta `pip install aim`.
 # Los argumentos del script se añaden a la config base (p. ej. --steps 300000) y ganan a los presets.
 
-WORKERS="${WORKERS:-2}"
+# Nota sobre WORKERS: la búsqueda (TPE) y la poda aprenden de los trials TERMINADOS, así que más trials simultáneos
+# = decisiones con menos información (con 4 a la vez, cada trial nuevo se elige sin conocer, como mucho, los 3 en curso).
+# Además cada proceso adicional rinde menos al compartir núcleos. En cambio la validación son corridas totalmente
+# independientes y sí conviene paralelizarla al máximo (JOBS).
+WORKERS="${WORKERS:-4}"
 TRIALS1="${TRIALS1:-50}"
 TRIALS2="${TRIALS2:-40}"
-DEVICE="${DEVICE:-cuda}"
+DEVICE="${DEVICE:-cpu}"
 THREADS="${THREADS:-1}"
 VALIDATE="${VALIDATE:-0}"
+JOBS="${JOBS:-0}"
 AIM_REPO="${AIM_REPO:-}"
 
 cd "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -73,8 +79,8 @@ optuna_two_phase() {
   python scripts/optuna_report.py "$f2" --top 5 --plot
 
   if [ "$VALIDATE" -gt 0 ]; then
-    python scripts/optuna_report.py "$f2" --validate "$VALIDATE"
+    python scripts/optuna_report.py "$f2" --validate "$VALIDATE" --jobs "$JOBS"
   else
-    echo ">> para validar el top con 11 semillas nuevas: python scripts/optuna_report.py $f2 --validate 3"
+    echo ">> para validar el top con 11 semillas nuevas (todas las corridas en paralelo): python scripts/optuna_report.py $f2 --validate 3"
   fi
 }
