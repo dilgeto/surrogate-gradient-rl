@@ -5,6 +5,9 @@
 #   TRIALS1   trials totales de la fase 1 (def. 50)      TRIALS2   trials totales de la fase 2 (def. 40)
 #   DEVICE    cpu | cuda | cuda:N (def. cpu)             THREADS   hilos de torch por proceso (def. 1)
 #   STUDY     prefijo de los estudios (def. el de la tarea): <STUDY>-f1 y <STUDY>-f2
+#   LOGS      qué se imprime en la terminal (los logs completos siempre van a optuna/logs/): trials (def.: el plan al
+#             empezar cada fase y una línea por trial terminado, con su hora) | full (además, todo lo que escribe
+#             cada proceso, con el prefijo [wN]) | off (nada, sólo el plan)
 #   SEEDS_PER_TRIAL  semillas que se promedian en cada trial (def. el de la tarea: 3 en MountainCar, 1 en las demás)
 #   VALIDATE  K > 0: al final reentrena el top K de la fase 2 con 11 semillas nuevas (def. 0)
 #   JOBS      corridas de validación simultáneas (def. 0 = el máximo que cabe: núcleos y RAM libre)
@@ -23,6 +26,7 @@ THREADS="${THREADS:-1}"
 VALIDATE="${VALIDATE:-0}"
 JOBS="${JOBS:-0}"
 SEEDS_PER_TRIAL="${SEEDS_PER_TRIAL:-}"
+LOG_MODE="${LOGS:-trials}"
 AIM_REPO="${AIM_REPO:-}"
 
 # Un hilo por proceso en TODAS las librerías: la paralelización es por procesos. Sin esto, en un servidor grande cada
@@ -39,6 +43,17 @@ if ! [[ "$WORKERS" =~ ^[1-9][0-9]*$ ]]; then
 fi
 python -c "import optuna" 2>/dev/null || { echo "!! no se puede importar optuna con $(command -v python); ejecuta: python -c 'import optuna'" >&2; exit 1; }
 
+# stream <n>: copia a la terminal la salida del proceso n (según LOGS). Por defecto sólo las líneas de trial terminado,
+# reformateadas: "<fecha hora> · wN · trial K · valor V · mejor: trial B (V*) · {parámetros}".
+stream() {
+  case "$LOG_MODE" in
+    off) cat > /dev/null ;;
+    full) sed -u "s/^/[w$1] /" ;;
+    *) { grep --line-buffered -E 'Trial [0-9]+ finished' || true; } \
+         | sed -u -E "s/^\[I ([0-9-]+ [0-9:]+),[0-9]+\] Trial ([0-9]+) finished with value: ([^ ]+) and parameters: (\{.*\})\. Best is trial ([0-9]+) with value: ([^ ]+)\./\1 · w$1 · trial \2 · valor \3 · mejor: trial \5 (\6) · \4/" ;;
+  esac
+}
+
 # run_phase <estudio> <fase> <trials totales> <flags base...>
 # Lanza WORKERS procesos con el mismo estudio y espera a que acaben. --n-trials es por proceso.
 run_phase() {
@@ -47,10 +62,13 @@ run_phase() {
   local aim=() seeds=()
   [ -n "$AIM_REPO" ] && aim=(--aim-repo "$AIM_REPO")
   [ -n "$SEEDS_PER_TRIAL" ] && seeds=(--seeds-per-trial "$SEEDS_PER_TRIAL")
-  echo ">> fase $phase · estudio $study · $WORKERS procesos x $per trials · logs: optuna/logs/$study-w*.log"
+  echo
+  echo "== $study · fase $phase · $total trials ($WORKERS procesos x $per) · logs completos: optuna/logs/$study-w*.log =="
+  python scripts/optuna_search.py --describe --study "$study" --phase "$phase" "${seeds[@]}" -- "$@" || return 1
   for ((i = 0; i < WORKERS; i++)); do
-    python scripts/optuna_search.py --study "$study" --phase "$phase" --n-trials "$per" "${seeds[@]}" "${aim[@]}" -- "$@" \
-      > "optuna/logs/$study-w$i.log" 2>&1 &
+    { set -o pipefail; PYTHONUNBUFFERED=1 python scripts/optuna_search.py --study "$study" --phase "$phase" --n-trials "$per" \
+        "${seeds[@]}" "${aim[@]}" -- "$@" 2>&1 | tee "optuna/logs/$study-w$i.log" | stream "$i"
+      r=$?; [ "$r" -eq 0 ] || echo "!! w$i terminó con error (código $r); mira optuna/logs/$study-w$i.log" >&2; exit "$r"; } &
     pids+=($!)
     sleep 5  # evita que los procesos creen la base SQLite del estudio a la vez
   done
@@ -77,12 +95,12 @@ optuna_two_phase() {
   local f1="$prefix-f1" f2="$prefix-f2"
 
   run_phase "$f1" 1 "$TRIALS1" "${base[@]}"
-  python scripts/optuna_report.py "$f1" --top 5 --plot
+  PYTHONWARNINGS=ignore python scripts/optuna_report.py "$f1" --top 5 --plot
 
   local best
   mapfile -t best < <(best_argv "$f1")
   run_phase "$f2" 2 "$TRIALS2" "${best[@]}"
-  python scripts/optuna_report.py "$f2" --top 5 --plot
+  PYTHONWARNINGS=ignore python scripts/optuna_report.py "$f2" --top 5 --plot
 
   if [ "$VALIDATE" -gt 0 ]; then
     python scripts/optuna_report.py "$f2" --validate "$VALIDATE" --jobs "$JOBS"

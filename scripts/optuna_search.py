@@ -122,6 +122,42 @@ def _baseline(name: str, base) -> object | None:
     return None
 
 
+class _Recorder:
+    """Sustituye a optuna.Trial para listar el rango de cada parámetro sin duplicar las definiciones de _suggest."""
+
+    spec = ""
+
+    def suggest_float(self, name, low, high, log=False):
+        self.spec = f"{low:g} … {high:g}" + ("  (escala log)" if log else "")
+        return low
+
+    def suggest_int(self, name, low, high):
+        self.spec = f"{low} … {high}  (entero)"
+        return low
+
+    def suggest_categorical(self, name, choices):
+        self.spec = "{" + ", ".join(str(c) for c in choices) + "}"
+        return choices[0]
+
+
+def print_plan(args, base, base_argv: list[str], params: tuple[str, ...]):
+    """Qué se va a probar: parámetros con su rango, configuración base y ajustes de cada trial."""
+    print(f"  Base fija: {shlex.join(base_argv)}")
+    print(f"  Se prueba ({len(params)} parámetros):")
+    for p in params:
+        rec = _Recorder()
+        _suggest(rec, p)
+        note = "  [multiplica la ganancia por defecto]" if p.endswith("_gain_scale") else ""
+        print(f"    {p:<15s} {rec.spec}{note}")
+    print(f"  Cada trial: {base.env}, {base.steps:,} pasos · {args.seeds_per_trial} semilla(s) · puntuación {args.score}"
+          f"{'' if args.score == 'auc' else f' (últimas {args.last_k} evaluaciones)'} · poda {args.pruner}")
+    if not args.no_baseline:
+        vals = {p: _baseline(p, base) for p in params}
+        txt = ", ".join(f"{p}={v:.4g}" for p, v in vals.items() if v is not None)
+        print(f"  Trial 0 (si el estudio es nuevo): la configuración base como referencia -> {txt}")
+    print(f"  Los primeros {args.n_startup_trials} trials terminados se sortean al azar; después TPE propone según los resultados.")
+
+
 class DeadNetwork(optuna.TrialPruned):
     pass
 
@@ -259,6 +295,7 @@ def main():
     ap.add_argument("--pruner", choices=("median", "hyperband", "none"), default=None, help="def.: median, o el de la tarea")
     ap.add_argument("--n-startup-trials", type=int, default=8, help="trials completos antes de podar y de usar TPE")
     ap.add_argument("--warmup-evals", type=int, default=None, help="evaluaciones sin podar (pruner median; def.: 2, o el de la tarea)")
+    ap.add_argument("--describe", action="store_true", help="imprime qué se va a probar y sale (no entrena ni crea el estudio)")
     ap.add_argument("--no-baseline", action="store_true", help="no encolar la config base como primer trial")
     ap.add_argument("--no-dead-check", dest="dead_check", action="store_false",
                     help="no podar redes sin disparos / saturadas a la iteración --dead-check-iter")
@@ -285,6 +322,10 @@ def main():
     for p in params:
         if p not in PHASE1 + PHASE2:
             raise SystemExit(f"parámetro desconocido {p!r}; opciones: {PHASE1 + PHASE2}")
+
+    if args.describe:
+        print_plan(args, base, base_argv, params)
+        return
 
     storage = args.storage
     if storage is None:
