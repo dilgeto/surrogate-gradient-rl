@@ -5,6 +5,7 @@
 #   TRIALS1   trials totales de la fase 1 (def. 50)      TRIALS2   trials totales de la fase 2 (def. 40)
 #   DEVICE    cpu | cuda | cuda:N (def. cpu)             THREADS   hilos de torch por proceso (def. 1)
 #   STUDY     prefijo de los estudios (def. el de la tarea): <STUDY>-f1 y <STUDY>-f2
+#   SEEDS_PER_TRIAL  semillas que se promedian en cada trial (def. el de la tarea: 3 en MountainCar, 1 en las demás)
 #   VALIDATE  K > 0: al final reentrena el top K de la fase 2 con 11 semillas nuevas (def. 0)
 #   JOBS      corridas de validación simultáneas (def. 0 = el máximo que cabe: núcleos y RAM libre)
 #   AIM_REPO  repositorio de Aim (aim://host:53800 o ruta local); si se omite no se usa Aim. Hace falta `pip install aim`.
@@ -21,8 +22,12 @@ DEVICE="${DEVICE:-cpu}"
 THREADS="${THREADS:-1}"
 VALIDATE="${VALIDATE:-0}"
 JOBS="${JOBS:-0}"
+SEEDS_PER_TRIAL="${SEEDS_PER_TRIAL:-}"
 AIM_REPO="${AIM_REPO:-}"
 
+# Un hilo por proceso en TODAS las librerías: la paralelización es por procesos. Sin esto, en un servidor grande cada
+# proceso (numpy/OpenBLAS/MKL/OpenMP) puede abrir tantos hilos como núcleos tenga la máquina y se estorban entre sí.
+export OMP_NUM_THREADS="${OMP_NUM_THREADS:-1}" MKL_NUM_THREADS="${MKL_NUM_THREADS:-1}" OPENBLAS_NUM_THREADS="${OPENBLAS_NUM_THREADS:-1}"
 cd "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 [ -f .venv/bin/activate ] && . .venv/bin/activate
 mkdir -p optuna/logs
@@ -39,11 +44,12 @@ python -c "import optuna" 2>/dev/null || { echo "!! no se puede importar optuna 
 run_phase() {
   local study=$1 phase=$2 total=$3; shift 3
   local per=$(( (total + WORKERS - 1) / WORKERS )) pids=() i rc=0
-  local aim=()
+  local aim=() seeds=()
   [ -n "$AIM_REPO" ] && aim=(--aim-repo "$AIM_REPO")
+  [ -n "$SEEDS_PER_TRIAL" ] && seeds=(--seeds-per-trial "$SEEDS_PER_TRIAL")
   echo ">> fase $phase · estudio $study · $WORKERS procesos x $per trials · logs: optuna/logs/$study-w*.log"
   for ((i = 0; i < WORKERS; i++)); do
-    python scripts/optuna_search.py --study "$study" --phase "$phase" --n-trials "$per" "${aim[@]}" -- "$@" \
+    python scripts/optuna_search.py --study "$study" --phase "$phase" --n-trials "$per" "${seeds[@]}" "${aim[@]}" -- "$@" \
       > "optuna/logs/$study-w$i.log" 2>&1 &
     pids+=($!)
     sleep 5  # evita que los procesos creen la base SQLite del estudio a la vez

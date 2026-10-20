@@ -16,6 +16,9 @@ EVAL_EPISODES="${EVAL_EPISODES:-20}"
 OUT="${OUT:-runs}"
 THREADS="${THREADS:-1}"
 
+# Un hilo por proceso en TODAS las librerías: la paralelización es por procesos. Sin esto, en un servidor grande cada
+# proceso (numpy/OpenBLAS/MKL/OpenMP) puede abrir tantos hilos como núcleos tenga la máquina y se estorban entre sí.
+export OMP_NUM_THREADS="${OMP_NUM_THREADS:-1}" MKL_NUM_THREADS="${MKL_NUM_THREADS:-1}" OPENBLAS_NUM_THREADS="${OPENBLAS_NUM_THREADS:-1}"
 cd "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 [ -f .venv/bin/activate ] && . .venv/bin/activate
 
