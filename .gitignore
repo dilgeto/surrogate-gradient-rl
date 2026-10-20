@@ -1,4 +1,5 @@
 .venv/
+optuna/
 build/
 __pycache__/
 *.egg-info/

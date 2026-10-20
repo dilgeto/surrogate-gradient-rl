@@ -155,7 +155,8 @@ def print_plan(args, base, base_argv: list[str], params: tuple[str, ...]):
         vals = {p: _baseline(p, base) for p in params}
         txt = ", ".join(f"{p}={v:.4g}" for p, v in vals.items() if v is not None)
         print(f"  Trial 0 (si el estudio es nuevo): la configuración base como referencia -> {txt}")
-    print(f"  Los primeros {args.n_startup_trials} trials terminados se sortean al azar; después TPE propone según los resultados.")
+    print(f"  Mientras haya menos de {args.n_startup_trials} trials terminados, cada trial nuevo se sortea al azar (con N procesos en paralelo,"
+          f" los primeros N); después TPE propone cada uno según los resultados ya terminados.")
 
 
 class DeadNetwork(optuna.TrialPruned):

@@ -43,14 +43,14 @@ if ! [[ "$WORKERS" =~ ^[1-9][0-9]*$ ]]; then
 fi
 python -c "import optuna" 2>/dev/null || { echo "!! no se puede importar optuna con $(command -v python); ejecuta: python -c 'import optuna'" >&2; exit 1; }
 
-# stream <n>: copia a la terminal la salida del proceso n (según LOGS). Por defecto sólo las líneas de trial terminado,
-# reformateadas: "<fecha hora> · wN · trial K · valor V · mejor: trial B (V*) · {parámetros}".
+# stream <n> <estudio>: copia a la terminal la salida del proceso n (según LOGS). Por defecto sólo las líneas de trial
+# terminado, reformateadas: "<fecha hora> · <estudio> · wN · trial K · valor V · mejor: trial B (V*) · {parámetros}".
 stream() {
   case "$LOG_MODE" in
     off) cat > /dev/null ;;
     full) sed -u "s/^/[w$1] /" ;;
     *) { grep --line-buffered -E 'Trial [0-9]+ finished' || true; } \
-         | sed -u -E "s/^\[I ([0-9-]+ [0-9:]+),[0-9]+\] Trial ([0-9]+) finished with value: ([^ ]+) and parameters: (\{.*\})\. Best is trial ([0-9]+) with value: ([^ ]+)\./\1 · w$1 · trial \2 · valor \3 · mejor: trial \5 (\6) · \4/" ;;
+         | sed -u -E "s/^\[I ([0-9-]+ [0-9:]+),[0-9]+\] Trial ([0-9]+) finished with value: ([^ ]+) and parameters: (\{.*\})\. Best is trial ([0-9]+) with value: ([^ ]+)\./\1 · $2 · w$1 · trial \2 · valor \3 · mejor: trial \5 (\6) · \4/" ;;
   esac
 }
 
@@ -67,7 +67,7 @@ run_phase() {
   python scripts/optuna_search.py --describe --study "$study" --phase "$phase" "${seeds[@]}" -- "$@" || return 1
   for ((i = 0; i < WORKERS; i++)); do
     { set -o pipefail; PYTHONUNBUFFERED=1 python scripts/optuna_search.py --study "$study" --phase "$phase" --n-trials "$per" \
-        "${seeds[@]}" "${aim[@]}" -- "$@" 2>&1 | tee "optuna/logs/$study-w$i.log" | stream "$i"
+        "${seeds[@]}" "${aim[@]}" -- "$@" 2>&1 | tee "optuna/logs/$study-w$i.log" | stream "$i" "$study"
       r=$?; [ "$r" -eq 0 ] || echo "!! w$i terminó con error (código $r); mira optuna/logs/$study-w$i.log" >&2; exit "$r"; } &
     pids+=($!)
     sleep 5  # evita que los procesos creen la base SQLite del estudio a la vez
