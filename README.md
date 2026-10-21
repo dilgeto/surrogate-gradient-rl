@@ -111,6 +111,21 @@ usa 3 semillas por trial y no poda (resultado casi binario), y CarTrack espera 5
 (las curvas despegan tarde). `minibatch` llega a 4096 y `ent_coef` a 5e-2 (el preset de MountainCar usa 0.02);
 para lotes grandes pasa `--num-envs`/`--rollout-steps` en la config base, p. ej. `--num-envs 64 --rollout-steps 128`.
 
+### Búsqueda como en wann-cpp (`scripts/screening.py`)
+
+Mismo procedimiento que `screening_reduce.py` + `screening_full.py` de wann-cpp, con los 13 hiperparámetros (PPO + SNN)
+a la vez: **fase 1** rondas de N trials a baja fidelidad (25 % de los pasos) con TPE (`constant_liar`, multivariante) y
+poda por mediana; tras cada ronda se divide cada parámetro en 5 tramos y se eliminan los significativamente peores
+(Mann-Whitney U unilateral, α = 0.05, resultados acumulados) hasta que no cae ninguno; **fase 2** TPE a presupuesto
+completo en el espacio reducido; **fase 3** los mejores K con varias semillas nuevas (todas en paralelo).
+
+```bash
+pip install -e .[optuna]       # incluye scipy
+python scripts/screening.py --task acrobot --mode all --jobs 8          # 4 rondas x 30, fase 2 de 20, top 3 x 11 semillas
+python scripts/screening.py --task acrobot --mode analyse               # evolución del espacio y resultados
+```
+Tareas: `acrobot`, `disc_mc` (MountainCarDiscrete), `car` (CarTrack). Resultados en `screening/<tarea>/`.
+
 ## Ruido de memristores
 
 Cada peso de las capas del actor (`NoisyLinear`, incluidas las del baseline `--neuron ann`) se mapea a un

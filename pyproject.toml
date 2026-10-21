@@ -7,7 +7,7 @@ dependencies = ["torch", "snntorch", "numpy", "matplotlib"]
 
 [project.optional-dependencies]
 sb3 = ["stable-baselines3"]
-optuna = ["optuna"]  # scripts/optuna_search.py, optuna_report.py
+optuna = ["optuna", "scipy"]  # scripts/optuna_search.py, optuna_report.py, screening.py (scipy: test de Mann-Whitney)
 analysis = ["pandas"]  # scripts/summarize_noise.py, plot_noise.py, run_noise_sweeps.py
 
 [build-system]

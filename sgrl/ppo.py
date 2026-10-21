@@ -266,7 +266,7 @@ class PPO:
                 steps=self.total_steps,
                 ep_return=float(np.mean(rets)) if rets else float("nan"),
                 ep_len=float(np.mean([l for _, l in self.recent])) if rets else float("nan"),
-                std=float(self.agent.log_std.exp().mean()),
+                std=float(self.agent.log_std.exp().mean().detach()),
                 sps=self.total_steps / (now - t0),
                 t_rollout=t_upd - t_roll,
                 t_update=now - t_upd,
