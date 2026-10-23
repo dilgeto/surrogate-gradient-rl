@@ -14,7 +14,8 @@ comparten el estudio (SQLite); TPE usa constant_liar para tener en cuenta los tr
 
     python scripts/screening.py --task acrobot --mode all                  # fases 1, 2 y 3
     python scripts/screening.py --task car --mode reduce --rounds 4 --n 30 --jobs 8
-    python scripts/screening.py --task disc_mc --mode both --n 20 --top 3 --seeds 11 --jobs 20
+    python scripts/screening.py --task car --mode all --hidden 3 2 --n2 40       # red pequeña (equivalente a una de wann-cpp)
+    python scripts/screening.py --task disc_mc --mode both --n2 40 --top 3 --seeds 11 --jobs2 10 --jobs3 11
     python scripts/screening.py --task acrobot --mode analyse
     python scripts/screening.py --task acrobot --mode all -- --steps 2000000      # lo que va tras -- son flags de sgrl.train
 
@@ -330,7 +331,7 @@ def phase2(a, base_argv, full_steps, out):
     last = last_space(out)
     space = {k: tuple(v) for k, v in last["space"].items()} if last else dict(INITIAL_SPACE)
     src = f"ronda {last['round']} de space_log.jsonl" if last else "INITIAL_SPACE (no hay reducción)"
-    n = a.n if a.n_given else 20
+    n = a.n2
     print(f"\n== {a.task} · fase 2 · {n} trials a presupuesto completo ({full_steps:,} pasos) · {min(a.jobs2, n)} procesos ==\n"
           f"  espacio: {src}\n{fmt_space(space)}", flush=True)
     study_name = f"{a.task}-p2"
@@ -417,7 +418,10 @@ def main():
     ap.add_argument("--mode", default="all", choices=("reduce", "phase2", "phase3", "both", "all", "analyse"),
                     help="both = fases 2 y 3; all = 1, 2 y 3")
     ap.add_argument("--rounds", type=int, default=4, help="rondas máximas de reducción (def. 4, como wann-cpp)")
-    ap.add_argument("--n", type=int, default=None, help="trials por ronda (fase 1, def. 30) o en total (fase 2, def. 20)")
+    ap.add_argument("--n", type=int, default=30, help="trials por ronda en la fase 1 (def. 30, como wann-cpp)")
+    ap.add_argument("--n2", type=int, default=20, help="trials de la fase 2 (def. 20, como wann-cpp)")
+    ap.add_argument("--hidden", type=int, nargs="+", default=None,
+                    help="neuronas ocultas del actor, p. ej. --hidden 3 2 (def. el del preset: 64 64). Fijo, no se busca")
     ap.add_argument("--jobs", type=int, default=8, help="procesos en paralelo en la fase 1 (def. 8)")
     ap.add_argument("--jobs2", type=int, default=4,
                     help="procesos en paralelo en la fase 2 (def. 4): con solo 20 trials, más procesos dejan casi la mitad "
@@ -435,9 +439,6 @@ def main():
     a, extra = ap.parse_known_args()
     if "--" in extra:
         extra.remove("--")
-    a.n_given = a.n is not None
-    if a.n is None:
-        a.n = 30
     t = TASKS[a.task]
     if a.fidelity is None:
         a.fidelity = t.get("fidelity", 0.25)
@@ -446,6 +447,8 @@ def main():
         base_argv += ["--reward-shaping", str(t["shaping"])]
     if t["steps"]:
         base_argv += ["--steps", str(t["steps"])]
+    if a.hidden:
+        base_argv += ["--hidden", *map(str, a.hidden)]
     base_argv += extra
     from sgrl.train import parse_args
     full_steps = parse_args(base_argv).steps
