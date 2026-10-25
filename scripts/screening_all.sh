@@ -7,6 +7,8 @@
 # libre para el sistema; con 12 saldrían oleadas medio vacías (12, 12, 6) y tardaría lo mismo.
 set -uo pipefail
 cd "$(dirname "$0")/.."
+[ -f .venv/bin/activate ] && . .venv/bin/activate
+python scripts/check_env.py --quiet || { echo "!! el entorno no está listo (ver arriba); no lanzo nada" >&2; exit 1; }
 export JOBS="${JOBS:-10}" JOBS2="${JOBS2:-10}" JOBS3="${JOBS3:-11}" N2="${N2:-40}"
 run() {  # <script> <hidden>
   echo; echo "################ $1  (hidden $2)  $(date '+%F %T')"

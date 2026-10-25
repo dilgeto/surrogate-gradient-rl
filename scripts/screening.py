@@ -286,7 +286,23 @@ def last_space(out: Path):
 
 
 # --- fases -----------------------------------------------------------------------------------------------------
+def check_deps():
+    """Falla al arrancar (no tras una hora de trials) si falta scipy en ESTE intérprete."""
+    try:
+        from scipy.stats import mannwhitneyu  # noqa: F401
+    except ImportError:
+        raise SystemExit(f"falta scipy en el Python que ejecuta el script ({sys.executable}).\n"
+                         f"Instálalo con ese mismo intérprete:  {sys.executable} -m pip install scipy")
+
+
+def merge_round(rows: list[dict], r: int, new: list[dict]) -> list[dict]:
+    """Resultados acumulados con los de la ronda r sustituidos por `new`. Si una ejecución anterior se cortó después de
+    guardar results.csv y antes de reducir el espacio, esa ronda ya está en `rows`: añadirla otra vez duplicaría datos."""
+    return [x for x in rows if int(x["round"]) != r] + new
+
+
 def phase_reduce(a, base_argv, full_steps, out):
+    check_deps()
     steps = max(1, int(round(a.fidelity * full_steps)))
     rows = read_csv(out / "results.csv")
     space = dict(INITIAL_SPACE)
@@ -304,7 +320,7 @@ def phase_reduce(a, base_argv, full_steps, out):
     for r in range(start, a.rounds):
         print(f"\nRonda {r} · espacio:\n{fmt_space(space)}", flush=True)
         new = run_trials(a, f"r{r}", f"{a.task}-r{r:02d}", space, a.n, r, steps, True, base_argv, out, a.jobs)
-        rows += new
+        rows = merge_round(rows, r, new)
         write_csv(out / "results.csv", rows)
         if len(rows) < 3:
             print("  Muy pocos trials completados para reducir el espacio.")
@@ -452,6 +468,10 @@ def main():
     base_argv += extra
     from sgrl.train import parse_args
     full_steps = parse_args(base_argv).steps
+    if a.mode != "analyse":  # falla ya, y no tras horas de trials, si falta algo
+        import check_env
+        if not check_env.run(quiet=True):
+            raise SystemExit(1)
     out = Path(a.dir) / a.task
     out.mkdir(parents=True, exist_ok=True)
     Path(a.runs_dir).mkdir(parents=True, exist_ok=True)
