@@ -127,6 +127,8 @@ python scripts/screening.py --task acrobot --mode analyse               # evoluc
 Tareas: `acrobot`, `disc_mc` (MountainCarDiscrete), `car` (CarTrack). Resultados en `screening/<tarea>/`.
 `--n2 40` fija los trials de la fase 2 y `--hidden 3 2` el tamaño del actor (fijo, no se busca). `scripts/screening_all.sh` lanza
 las tres tareas una tras otra con redes totalmente conectadas de tantas conexiones como la red de wann-cpp de cada tarea.
+`scripts/screening_tmux.sh [todo|conexiones|neuronas]` lanza las búsquedas EN PARALELO, una por ventana de tmux (las 6 a la vez con
+`todo`: tres tareas x las dos variantes de red), repartiendo las hebras y comprobando la RAM antes de empezar.
 
 ## Ruido de memristores
 

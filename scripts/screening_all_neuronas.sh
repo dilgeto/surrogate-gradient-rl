@@ -8,6 +8,7 @@
 # Resultados en screening_neuronas/ y runs_neuronas/ para no mezclarse con los de la variante por conexiones.
 set -uo pipefail
 cd "$(dirname "$0")/.."
+source scripts/_screening_nets.sh
 [ -f .venv/bin/activate ] && . .venv/bin/activate
 python scripts/check_env.py --quiet || { echo "!! el entorno no está listo (ver arriba); no lanzo nada" >&2; exit 1; }
 export JOBS="${JOBS:-10}" JOBS2="${JOBS2:-10}" JOBS3="${JOBS3:-11}" N2="${N2:-40}"
@@ -16,7 +17,7 @@ run() {  # <script> <hidden>
   echo; echo "################ $1  (hidden $2)  $(date '+%F %T')"
   HIDDEN="$2" "scripts/$1" || echo "!! $1 terminó con error; sigo con la siguiente tarea"
 }
-run screening_mountaincar.sh "${HID_MC:-16 15}"
-run screening_acrobot.sh "${HID_ACROBOT:-14 13}"
-run screening_carrace.sh "${HID_CAR:-8 7}"
+run screening_mountaincar.sh "${HID_MC:-$HID_NEU_MC}"
+run screening_acrobot.sh "${HID_ACROBOT:-$HID_NEU_ACROBOT}"
+run screening_carrace.sh "${HID_CAR:-$HID_NEU_CAR}"
 echo; echo "################ terminado $(date '+%F %T')"
