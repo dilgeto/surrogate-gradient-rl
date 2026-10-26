@@ -8,7 +8,8 @@
   Fase 2 (phase2)  TPE a presupuesto COMPLETO en el espacio ya reducido, sin poda.
   Fase 3 (phase3)  Los mejores K de la fase 2, cada uno con varias semillas nuevas: media ± desviación.
 
-Se buscan los 13 hiperparámetros a la vez (PPO + SNN), con rangos de partida amplios que la reducción estrecha.
+Se buscan los 13 hiperparámetros a la vez (PPO + SNN), con rangos de partida amplios que la reducción estrecha; en Acrobot
+y MountainCar son 12, porque sim_steps queda fijo en 20 (en wann-cpp la ventana de esas dos tareas es una constante de 20 ms).
 Cada trial es UNA corrida (como en wann-cpp). Los trials de una ronda se reparten entre `--jobs` procesos que
 comparten el estudio (SQLite); TPE usa constant_liar para tener en cuenta los trials en curso.
 
@@ -20,7 +21,8 @@ comparten el estudio (SQLite); TPE usa constant_liar para tener en cuenta los tr
     python scripts/screening.py --task acrobot --mode all -- --steps 2000000      # lo que va tras -- son flags de sgrl.train
 
 Tareas: acrobot (Acrobot, shaping 10), disc_mc (MountainCarDiscrete, shaping 10, 500k pasos), car (CarTrack).
-Resultados: screening/<tarea>/{results.csv, space_log.jsonl, p2_results.csv, p3_summary.json, studies.db} y
+Resultados (en results.csv y p2_results.csv, la columna minibatch se guarda como exponente k: valor = 2**k):
+screening/<tarea>/{results.csv, space_log.jsonl, p2_results.csv, p3_summary.json, studies.db} y
 runs/<tarea>-p3-rank<R>-s<semilla>/ (las corridas de validación).
 """
 from __future__ import annotations
@@ -49,9 +51,12 @@ from types import SimpleNamespace
 import numpy as np
 import optuna
 
-TASKS = {  # tarea -> entorno, shaping de wann-cpp (p/*.json), pasos por defecto (None = los del preset)
-    "acrobot": dict(env="Acrobot", shaping=10, steps=None),
-    "disc_mc": dict(env="MountainCarDiscrete", shaping=10, steps=500_000),
+# tarea -> entorno, shaping de wann-cpp (p/*.json), pasos por defecto (None = los del preset) y parámetros FIJOS que no se
+# buscan. En wann-cpp la ventana de simulación de Acrobot y MountainCar es una constante de 20 ms (SIM_WINDOW_MS en
+# SnnAcrobotTask.h y SnnDiscMCTask.h; el snn_window_ms que se "buscaba" en esas tareas no se leía), y sólo CarTrack la busca.
+TASKS = {
+    "acrobot": dict(env="Acrobot", shaping=10, steps=None, fixed=dict(sim_steps=20)),
+    "disc_mc": dict(env="MountainCarDiscrete", shaping=10, steps=500_000, fixed=dict(sim_steps=20)),
     "car": dict(env="CarTrack", shaping=None, steps=None, fidelity=0.5),  # sus curvas despegan tarde: 25 % se queda corto
 }
 
@@ -67,7 +72,7 @@ INITIAL_SPACE: dict[str, tuple] = {
     "epochs":         ("int", 2, 15, None),
     "beta":           ("float", 0.50, 0.99, 0.01),
     "alpha":          ("log", 5.0, 100.0, None),
-    "sim_steps":      ("pow2", 3, 5, None),            # 8 .. 32
+    "sim_steps":      ("int", 20, 80, None),           # entero, como snn_window_ms en wann-cpp (dt = 1 ms)
     "in_gain_scale":  ("log", 0.25, 4.0, None),
     "hid_gain_scale": ("log", 0.25, 4.0, None),
     "gae_lambda":     ("float", 0.90, 0.99, 0.01),
@@ -80,6 +85,11 @@ def real_value(name: str, kind: str, v):
     if kind == "pow2":
         return 2 ** int(round(v))
     return int(round(v)) if kind == "int" else v  # los enteros pueden volver de un CSV como 14.0
+
+
+def shown(params: dict, space: dict) -> dict:
+    """Valores REALES de los parámetros para imprimirlos (minibatch se muestrea como exponente k: 2**k)."""
+    return {n: real_value(n, space[n][0], v) for n, v in params.items()}
 
 
 def to_flags(params: dict, space: dict) -> list[str]:
@@ -212,7 +222,7 @@ def worker(cfg: dict) -> int:
             study.tell(trial, score)
             best = study.best_value
             print(f"{datetime.now():%Y-%m-%d %H:%M:%S} · {cfg['tag']} · trial {trial.number} · valor {score:.4g} · "
-                  f"mejor {best:.4g} · {{{', '.join(f'{k}: {v:.4g}' for k, v in params.items())}}}", flush=True)
+                  f"mejor {best:.4g} · {{{', '.join(f'{k}: {v:.4g}' for k, v in shown(params, space).items())}}}", flush=True)
             done += 1
         except optuna.TrialPruned:
             study.tell(trial, state=optuna.trial.TrialState.PRUNED)
@@ -301,15 +311,25 @@ def merge_round(rows: list[dict], r: int, new: list[dict]) -> list[dict]:
     return [x for x in rows if int(x["round"]) != r] + new
 
 
+def reconcile(last: dict, initial: dict, out: Path) -> dict:
+    """Espacio guardado en space_log.jsonl, si es del MISMO conjunto de parámetros que el de esta tarea; si no, se detiene
+    (reanudar mezclaría estudios de dos espacios distintos)."""
+    saved = {k: tuple(v) for k, v in last["space"].items()}
+    if set(saved) != set(initial):
+        raise SystemExit(f"{out} se creó con otro conjunto de parámetros (sobran {sorted(set(saved) - set(initial))}, "
+                         f"faltan {sorted(set(initial) - set(saved))}). Usa otra carpeta (--dir) o bórrala: reanudar mezclaría resultados.")
+    return saved
+
+
 def phase_reduce(a, base_argv, full_steps, out):
     check_deps()
     steps = max(1, int(round(a.fidelity * full_steps)))
     rows = read_csv(out / "results.csv")
-    space = dict(INITIAL_SPACE)
+    space = dict(a.space0)
     start = 0
     last = last_space(out)
     if last:
-        space = {k: tuple(v) for k, v in last["space"].items()}
+        space = reconcile(last, a.space0, out)
         start = last["round"] + 1
         print(f"Reanudando: espacio restaurado de la ronda {last['round']}, {len(rows)} resultados previos.")
         if not any(last["eliminated"].values() if last["eliminated"] else []) and last["round"] >= 0:
@@ -345,8 +365,8 @@ def phase_reduce(a, base_argv, full_steps, out):
 
 def phase2(a, base_argv, full_steps, out):
     last = last_space(out)
-    space = {k: tuple(v) for k, v in last["space"].items()} if last else dict(INITIAL_SPACE)
-    src = f"ronda {last['round']} de space_log.jsonl" if last else "INITIAL_SPACE (no hay reducción)"
+    space = reconcile(last, a.space0, out) if last else dict(a.space0)
+    src = f"ronda {last['round']} de space_log.jsonl" if last else "espacio inicial (no hay reducción)"
     n = a.n2
     print(f"\n== {a.task} · fase 2 · {n} trials a presupuesto completo ({full_steps:,} pasos) · {min(a.jobs2, n)} procesos ==\n"
           f"  espacio: {src}\n{fmt_space(space)}", flush=True)
@@ -357,7 +377,7 @@ def phase2(a, base_argv, full_steps, out):
     (out / "p2_space.json").write_text(json.dumps({k: list(v) for k, v in space.items()}))
     print("  mejores:")
     for r in rows[:5]:
-        print(f"    trial {int(r['trial']):3d}  valor {r['score']:9.4g}  " + " ".join(f"{k}={r[k]:.4g}" for k in space))
+        print(f"    trial {int(r['trial']):3d}  valor {r['score']:9.4g}  " + " ".join(f"{k}={v:.4g}" for k, v in shown({k: r[k] for k in space}, space).items()))
 
 
 def phase3(a, base_argv, full_steps, out):
@@ -463,6 +483,10 @@ def main():
         base_argv += ["--reward-shaping", str(t["shaping"])]
     if t["steps"]:
         base_argv += ["--steps", str(t["steps"])]
+    fixed = t.get("fixed", {})
+    a.space0 = {k: v for k, v in INITIAL_SPACE.items() if k not in fixed}   # lo fijo no se busca
+    for k, v in fixed.items():
+        base_argv += [f"--{k.replace('_', '-')}", str(v)]
     if a.hidden:
         base_argv += ["--hidden", *map(str, a.hidden)]
     base_argv += extra
@@ -477,6 +501,7 @@ def main():
     Path(a.runs_dir).mkdir(parents=True, exist_ok=True)
     (out / "base_argv.txt").write_text(shlex.join(base_argv) + "\n")
     print(f"tarea {a.task} · base: {shlex.join(base_argv)}", flush=True)
+    print(f"  se buscan {len(a.space0)} parámetros" + (f"; fijos (no se buscan): {fixed}" if fixed else ""), flush=True)
     if a.mode == "analyse":
         return analyse(a, out)
     if a.mode in ("reduce", "all"):

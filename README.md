@@ -114,7 +114,7 @@ para lotes grandes pasa `--num-envs`/`--rollout-steps` en la config base, p. ej.
 ### Búsqueda como en wann-cpp (`scripts/screening.py`)
 
 Mismo procedimiento que `screening_reduce.py` + `screening_full.py` de wann-cpp, con los 13 hiperparámetros (PPO + SNN)
-a la vez: **fase 1** rondas de N trials a baja fidelidad (25 % de los pasos) con TPE (`constant_liar`, multivariante) y
+a la vez (12 en Acrobot y MountainCar: `sim_steps` fijo en 20, como la ventana de wann-cpp): **fase 1** rondas de N trials a baja fidelidad (25 % de los pasos) con TPE (`constant_liar`, multivariante) y
 poda por mediana; tras cada ronda se divide cada parámetro en 5 tramos y se eliminan los significativamente peores
 (Mann-Whitney U unilateral, α = 0.05, resultados acumulados) hasta que no cae ninguno; **fase 2** TPE a presupuesto
 completo en el espacio reducido; **fase 3** los mejores K con varias semillas nuevas (todas en paralelo).

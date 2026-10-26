@@ -1,6 +1,10 @@
 .venv/
 optuna/
 build/
+screening/
+runs_conexiones/
+runs_neuronas/
+runs_default/
 __pycache__/
 *.egg-info/
 *.so
