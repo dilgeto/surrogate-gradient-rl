@@ -1,0 +1,26 @@
+disc_mc-p3-rank0-s108: obs=2 act=1 agentes=1 acciones=3 actor=351 params  500000 pasos  [cpu]
+it    5 steps    20480 ret    -200.0 | kl 0.0077 std 0.890 gn 0.27 rate [0.360 0.511] | 591 sps
+it   10 steps    40960 ret    -197.7 | kl 0.0064 std 0.890 gn 0.10 rate [0.390 0.585] | 594 sps
+it   15 steps    61440 ret    -164.7 eval    -136.5 | kl 0.0095 std 0.890 gn 0.07 rate [0.362 0.540] | 592 sps
+it   20 steps    81920 ret    -150.7 | kl 0.0056 std 0.890 gn 0.02 rate [0.356 0.561] | 595 sps
+it   25 steps   102400 ret    -151.3 | kl 0.0031 std 0.890 gn 0.04 rate [0.350 0.599] | 595 sps
+it   30 steps   122880 ret    -128.8 eval    -129.0 | kl 0.0137 std 0.890 gn 0.11 rate [0.333 0.615] | 625 sps
+it   35 steps   143360 ret    -113.0 | kl 0.0102 std 0.890 gn 0.01 rate [0.332 0.595] | 631 sps
+it   40 steps   163840 ret    -113.5 | kl 0.0053 std 0.890 gn 0.04 rate [0.315 0.585] | 636 sps
+it   45 steps   184320 ret    -107.2 eval    -111.0 | kl 0.0060 std 0.890 gn 0.01 rate [0.321 0.596] | 632 sps
+it   50 steps   204800 ret    -104.6 | kl 0.0047 std 0.890 gn 0.03 rate [0.324 0.600] | 635 sps
+it   55 steps   225280 ret    -118.8 | kl 0.0041 std 0.890 gn 0.04 rate [0.339 0.608] | 637 sps
+it   60 steps   245760 ret    -107.2 eval    -101.5 | kl 0.0039 std 0.890 gn 0.01 rate [0.329 0.600] | 633 sps
+it   65 steps   266240 ret    -101.4 | kl 0.0057 std 0.890 gn 0.01 rate [0.325 0.586] | 638 sps
+it   70 steps   286720 ret    -114.3 | kl 0.0057 std 0.890 gn 0.11 rate [0.338 0.582] | 645 sps
+it   75 steps   307200 ret    -106.5 eval    -102.8 | kl 0.0126 std 0.890 gn 0.05 rate [0.328 0.580] | 656 sps
+it   80 steps   327680 ret    -107.6 | kl 0.0064 std 0.890 gn 0.03 rate [0.332 0.584] | 659 sps
+it   85 steps   348160 ret    -105.3 | kl 0.0046 std 0.890 gn 0.12 rate [0.328 0.576] | 665 sps
+it   90 steps   368640 ret    -101.0 eval    -102.0 | kl 0.0113 std 0.890 gn 0.08 rate [0.335 0.574] | 672 sps
+it   95 steps   389120 ret    -104.0 | kl 0.0028 std 0.890 gn 0.02 rate [0.330 0.563] | 667 sps
+it  100 steps   409600 ret     -97.0 | kl 0.0032 std 0.890 gn 0.03 rate [0.338 0.573] | 663 sps
+it  105 steps   430080 ret    -102.1 eval     -98.2 | kl 0.0021 std 0.890 gn 0.02 rate [0.344 0.565] | 660 sps
+it  110 steps   450560 ret     -99.2 | kl 0.0007 std 0.890 gn 0.02 rate [0.347 0.574] | 657 sps
+it  115 steps   471040 ret     -99.8 | kl 0.0030 std 0.890 gn 0.01 rate [0.349 0.574] | 658 sps
+it  120 steps   491520 ret    -100.2 eval     -97.8 | kl 0.0008 std 0.890 gn 0.01 rate [0.347 0.571] | 656 sps
+final eval (20 episodios): -96.5 ± 7.3  [772 s]  -> runs_neuronas/disc_mc-p3-rank0-s108

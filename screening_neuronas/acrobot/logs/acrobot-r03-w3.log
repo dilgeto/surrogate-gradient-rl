@@ -1,0 +1,9 @@
+  [trial 1 seed 300001] it   15/123 steps    30720 train    -384.3 eval    -380.2
+  [trial 1 seed 300001] it   30/123 steps    61440 train    -210.9 eval    -225.6
+  [trial 1 seed 300001] it   45/123 steps    92160 train    -145.4 eval    -158.6
+  [trial 1 seed 300001] it   60/123 steps   122880 train    -124.9 eval    -146.0
+  [trial 1 seed 300001] it   75/123 steps   153600 train    -115.8 eval    -119.2
+  [trial 1 seed 300001] it   90/123 steps   184320 train    -117.8 eval    -111.0
+  [trial 14 seed 300014] it   15/123 steps    30720 train    -407.1 eval    -412.2
+  [trial 21 seed 300021] it   15/123 steps    30720 train    -464.1 eval    -371.9
+  [trial 29 seed 300029] it   15/123 steps    30720 train    -334.0 eval    -251.3

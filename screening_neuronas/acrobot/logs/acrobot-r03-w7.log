@@ -1,0 +1,8 @@
+  [trial 8 seed 300008] it   15/123 steps    30720 train    -229.5 eval    -343.7
+  [trial 8 seed 300008] it   30/123 steps    61440 train    -142.2 eval    -141.5
+  [trial 8 seed 300008] it   45/123 steps    92160 train    -127.0 eval    -110.3
+  [trial 8 seed 300008] it   60/123 steps   122880 train    -112.1 eval    -105.0
+  [trial 8 seed 300008] it   75/123 steps   153600 train    -115.8 eval    -106.2
+  [trial 8 seed 300008] it   90/123 steps   184320 train    -112.5 eval     -97.2
+  [trial 8 seed 300008] it  105/123 steps   215040 train    -128.3 eval     -90.1
+  [trial 8 seed 300008] it  120/123 steps   245760 train    -101.5 eval     -97.1

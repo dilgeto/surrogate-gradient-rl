@@ -1,0 +1,11 @@
+  [trial 4 seed 300004] it   15/123 steps    30720 train    -375.4 eval    -211.7
+  [trial 4 seed 300004] it   30/123 steps    61440 train    -193.1 eval    -153.4
+  [trial 4 seed 300004] it   45/123 steps    92160 train    -127.5 eval    -137.6
+  [trial 4 seed 300004] it   60/123 steps   122880 train    -112.1 eval     -96.7
+  [trial 4 seed 300004] it   75/123 steps   153600 train    -100.0 eval    -100.6
+  [trial 4 seed 300004] it   90/123 steps   184320 train    -121.0 eval    -102.8
+  [trial 4 seed 300004] it  105/123 steps   215040 train    -113.0 eval     -88.1
+  [trial 4 seed 300004] it  120/123 steps   245760 train    -101.1 eval     -99.3
+  [trial 4 seed 300004] it  123/123 steps   251904 train    -111.2 eval     -89.7
+  [trial 20 seed 300020] it   15/123 steps    30720 train    -350.1 eval    -500.0
+  [trial 29 seed 300029] it   15/123 steps    30720 train    -280.1 eval    -255.6

@@ -1,0 +1,11 @@
+  [trial 9 seed 9] it   15/123 steps    30720 train    -500.0 eval    -500.0
+  [trial 9 seed 9] it   30/123 steps    61440 train    -500.0 eval    -500.0
+  [trial 9 seed 9] it   45/123 steps    92160 train    -500.0 eval    -500.0
+  [trial 9 seed 9] it   60/123 steps   122880 train    -500.0 eval    -500.0
+  [trial 9 seed 9] it   75/123 steps   153600 train    -500.0 eval    -500.0
+  [trial 14 seed 14] it   15/123 steps    30720 train    -500.0 eval    -500.0
+  [trial 14 seed 14] it   30/123 steps    61440 train    -461.4 eval    -447.1
+  [trial 14 seed 14] it   45/123 steps    92160 train    -356.3 eval    -278.6
+  [trial 14 seed 14] it   60/123 steps   122880 train    -288.9 eval    -210.5
+  [trial 20 seed 20] it   15/123 steps    30720 train    -433.5 eval    -433.4
+  [trial 20 seed 20] it   30/123 steps    61440 train    -217.0 eval    -307.7

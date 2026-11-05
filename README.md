@@ -190,6 +190,37 @@ Validación: `tests/test_all.py::test_noise_models_match_cpp_port` fija media y 
 ruidoso medidas con el C++ de `wann-cpp` (40 000 chips, los cuatro modelos, con y sin
 cuantización); el puerto coincide dentro del error estadístico.
 
+## Cuantización de pesos (post-entrenamiento)
+
+Cuantización simple por redondeo de los pesos del actor (`sgrl/quantize.py`), uniforme por capa, `w -> Δ·round(w/Δ)`
+con `Δ = max|W|/q` de cada capa. Dos esquemas (`--scheme`):
+
+* **`odin`** (por defecto, 3 bits): la sinapsis de ODIN guarda 3 bits de **magnitud** (0..7) y el signo es de la
+  neurona presináptica (ley de Dale), no de la sinapsis. Una neurona con salidas de signo mixto se duplica en una
+  gemela excitadora y otra inhibidora (`wann-cpp/ODIN_DEPLOYMENT.md`), así que cada peso conserva su signo y sólo se
+  cuantiza la magnitud: `q = 7`, 15 valores `{-7..7}·Δ`. `quant.json` cuenta las gemelas necesarias (`dale_twins`) y las
+  neuronas físicas resultantes (`odin_neurons`, el chip tiene 256). Idealizaciones: el paso es por capa (en el chip
+  habría que absorberlo en el umbral/ganancia de las neuronas) y la primera capa, analógica en esta red, también se cuantiza.
+* **`symmetric`**: `bits` bits *con* signo, `q = 2^(bits-1)-1` (con 2 bits es ternario); sirve para barrer la anchura.
+
+Los sesgos son digitales y se dejan en float (`--include-bias` los cuantiza); el crítico no se toca. Es cuantización
+"falsa": los pesos se guardan como float32 sobre la rejilla.
+
+```bash
+python scripts/quantize_eval.py --jobs 10                                   # ODIN, 3 bits, runs/ y runs_neuronas/ (3 ranks x 11 semillas)
+python scripts/quantize_eval.py --runs-dir runs_default --jobs 10           # ídem, modelos 64x64 (5 candidatos x 11 semillas)
+python scripts/quantize_eval.py --scheme symmetric --bits 8 6 5 4 3 2        # barrido de bits con signo
+python scripts/quantize_eval.py --runs-dir runs --task acrobot --model rank0 --episodes 20   # subconjunto
+```
+
+Las redes originales sólo se leen: cada red cuantizada es un checkpoint nuevo en
+`runs_quant/<esquema>/<runs>/<corrida>/w<bits>/` (`final.pt` + `config.json` + `quant.json` con paso y error por capa) y
+se evalúa recargándola desde disco. `runs_quant/<esquema>/quantization.csv` tiene una fila por red y anchura de bits
+(más `bits=32`: la red original con los mismos episodios, para comparar por pares) y `summary.csv` agrega entre las 11
+semillas por (familia, tarea, modelo, bits): retorno medio ± std entre semillas, mediana, Δ frente a la red original
+(media y mediana) y cuántas semillas empeoran. Con `--episodes 20` la fila `bits=32` reproduce `final_eval.json`. Los CSV se acumulan: cada corrida reemplaza sólo las redes que recalcula y conserva el resto. `n_over_256` del
+resumen cuenta las redes que, con sus gemelas de Dale, no caben en las 256 neuronas de ODIN.
+
 ## Validación del PPO contra stable-baselines3
 
 El PPO es propio (`sgrl/ppo.py`), así que para poder usarlo como línea base hay un preset que

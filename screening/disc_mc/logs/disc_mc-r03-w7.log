@@ -1,0 +1,15 @@
+  [trial 6 seed 300006] it    3/31 steps    12288 train    -200.0 eval    -169.2
+  [trial 6 seed 300006] it    6/31 steps    24576 train    -200.0 eval    -153.1
+  [trial 6 seed 300006] it    9/31 steps    36864 train    -183.7 eval    -162.9
+  [trial 6 seed 300006] it   12/31 steps    49152 train    -169.7 eval    -164.8
+  [trial 6 seed 300006] it   15/31 steps    61440 train    -162.8 eval    -168.4
+  [trial 6 seed 300006] it   18/31 steps    73728 train    -164.2 eval    -155.4
+  [trial 6 seed 300006] it   21/31 steps    86016 train    -176.4 eval    -154.0
+  [trial 6 seed 300006] it   24/31 steps    98304 train    -148.8 eval    -159.1
+  [trial 6 seed 300006] it   27/31 steps   110592 train    -161.3 eval    -156.0
+  [trial 22 seed 300022] it    3/31 steps    12288 train    -200.0 eval    -176.4
+  [trial 22 seed 300022] it    6/31 steps    24576 train    -200.0 eval    -164.3
+  [trial 22 seed 300022] it    9/31 steps    36864 train    -200.0 eval    -156.1
+  [trial 22 seed 300022] it   12/31 steps    49152 train    -196.2 eval    -159.4
+  [trial 28 seed 300028] it    3/31 steps    12288 train    -200.0 eval    -200.0
+  [trial 28 seed 300028] it    6/31 steps    24576 train    -200.0 eval    -200.0

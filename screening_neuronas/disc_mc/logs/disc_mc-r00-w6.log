@@ -1,0 +1,10 @@
+  [trial 7 seed 7] it    3/31 steps    12288 train    -200.0 eval    -140.2
+  [trial 7 seed 7] it    6/31 steps    24576 train    -197.2 eval    -166.5
+  [trial 7 seed 7] it    9/31 steps    36864 train    -179.7 eval    -148.2
+  [trial 7 seed 7] it   12/31 steps    49152 train    -163.8 eval    -145.2
+  [trial 7 seed 7] it   15/31 steps    61440 train    -161.1 eval    -145.8
+  [trial 7 seed 7] it   18/31 steps    73728 train    -165.8 eval    -145.8
+  [trial 7 seed 7] it   21/31 steps    86016 train    -161.8 eval    -144.8
+  [trial 7 seed 7] it   24/31 steps    98304 train    -144.5 eval    -144.6
+  [trial 7 seed 7] it   27/31 steps   110592 train    -147.8 eval    -143.1
+  [trial 7 seed 7] it   30/31 steps   122880 train    -146.3 eval    -142.3

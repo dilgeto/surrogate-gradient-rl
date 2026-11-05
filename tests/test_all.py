@@ -296,3 +296,47 @@ def test_train_and_noise_eval_cli(tmp_path):
     assert len(rows) == 2 * 2 * 2 and all(np.isfinite(float(r["return_mean"])) for r in rows)
     zero = [r for r in rows if float(r["noise_scale"]) == 0.0 and float(r["t_inference"]) == 0.0]
     assert all(float(r["weight_rmse"]) < 0.3 for r in zero) and len({r["return_mean"] for r in zero}) >= 1
+
+
+@pytest.mark.parametrize("scheme,bits,q", [("symmetric", 2, 1), ("symmetric", 4, 7), ("symmetric", 8, 127), ("odin", 3, 7), ("odin", 1, 1)])
+def test_weight_quantization_grid_and_leaves_rest_untouched(scheme, bits, q):
+    from sgrl.quantize import quantize_actor, weight_rmse
+    actor = _actor("lif")
+    before = {k: v.clone() for k, v in actor.state_dict().items()}
+    info = quantize_actor(actor, bits, scheme=scheme)
+    for name, m in actor.named_modules():
+        if isinstance(m, NoisyLinear):
+            step = info[f"{name}.weight"]["step"]
+            assert step == pytest.approx(float(before[f"{name}.weight"].abs().max()) / q)
+            codes = m.weight.detach() / step
+            assert torch.allclose(codes, codes.round(), atol=1e-4) and codes.abs().max() <= q + 1e-4
+            assert (m.weight - before[f"{name}.weight"]).abs().max() <= step / 2 + 1e-6   # redondeo: error <= Δ/2
+            assert torch.equal(m.bias, before[f"{name}.bias"])                             # sesgos digitales
+    assert 0 < weight_rmse(info) < 0.5 / q + 1e-6
+    again = quantize_actor(actor, bits, scheme=scheme)                                     # idempotente
+    assert weight_rmse(again) < 1e-5
+
+
+def test_odin_scheme_is_3bit_magnitude_with_separate_sign():
+    from sgrl.quantize import quantize_actor
+    actor = _actor("lif")
+    before = {n: m.weight.detach().clone() for n, m in actor.named_modules() if isinstance(m, NoisyLinear)}
+    info = quantize_actor(actor, 3)                                                        # esquema por defecto: odin
+    twins = 0
+    for n, m in actor.named_modules():
+        if isinstance(m, NoisyLinear):
+            w, wq = before[n], m.weight.detach()
+            mag = (wq.abs() / info[f"{n}.weight"]["step"]).round()
+            assert mag.max() <= 7 and set(mag.unique().tolist()) <= set(range(8))          # magnitud 0..7
+            assert ((wq == 0) | (wq.sign() == w.sign())).all()                             # nunca invierte el signo
+            twins += int(((wq > 0).any(0) & (wq < 0).any(0)).sum())
+            assert info[f"{n}.weight"]["dale_twins"] == int(((wq > 0).any(0) & (wq < 0).any(0)).sum())
+    assert twins > 0  # una red aleatoria tiene neuronas presinápticas de signo mixto: ODIN necesita gemelas
+
+
+def test_quantization_rejects_degenerate_bits():
+    from sgrl.quantize import quantize_actor
+    with pytest.raises(ValueError):
+        quantize_actor(_actor("lif"), 1, scheme="symmetric")
+    with pytest.raises(ValueError):
+        quantize_actor(_actor("lif"), 0)

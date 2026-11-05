@@ -1,0 +1,106 @@
+acrobot-p3-rank1-s105: obs=6 act=1 agentes=1 acciones=continuas actor=53 params  1000000 pasos  [cpu]
+it    5 steps    10240 ret    -500.0 | kl 0.0046 std 0.478 gn 0.11 rate [0.118 0.344] | 853 sps
+it   10 steps    20480 ret    -432.4 | kl 0.0092 std 0.446 gn 0.15 rate [0.297 0.299] | 853 sps
+it   15 steps    30720 ret    -269.1 | kl 0.0160 std 0.390 gn 0.41 rate [0.231 0.400] | 855 sps
+it   20 steps    40960 ret    -176.8 | kl 0.0151 std 0.352 gn 0.31 rate [0.252 0.411] | 931 sps
+it   25 steps    51200 ret    -152.4 | kl 0.0244 std 0.333 gn 0.10 rate [0.257 0.387] | 971 sps
+it   30 steps    61440 ret    -142.3 | kl 0.0157 std 0.307 gn 0.26 rate [0.266 0.374] | 999 sps
+it   35 steps    71680 ret    -140.9 | kl 0.0143 std 0.310 gn 0.41 rate [0.255 0.360] | 1045 sps
+it   40 steps    81920 ret    -121.5 | kl 0.0187 std 0.295 gn 0.16 rate [0.252 0.415] | 1081 sps
+it   45 steps    92160 ret    -119.2 | kl 0.0113 std 0.285 gn 0.17 rate [0.267 0.397] | 1120 sps
+it   50 steps   102400 ret    -113.1 | kl 0.0233 std 0.291 gn 0.59 rate [0.272 0.382] | 1151 sps
+it   55 steps   112640 ret    -107.1 | kl 0.0103 std 0.284 gn 0.15 rate [0.271 0.389] | 1182 sps
+it   60 steps   122880 ret    -121.1 | kl 0.0102 std 0.269 gn 0.30 rate [0.289 0.408] | 1230 sps
+it   61 steps   124928 ret    -104.8 eval    -103.3 | kl 0.0204 std 0.269 gn 0.25 rate [0.301 0.379] | 1237 sps
+it   65 steps   133120 ret    -106.3 | kl 0.0147 std 0.258 gn 0.49 rate [0.275 0.403] | 1237 sps
+it   70 steps   143360 ret    -103.5 | kl 0.0136 std 0.259 gn 0.43 rate [0.285 0.434] | 1260 sps
+it   75 steps   153600 ret     -97.5 | kl 0.0190 std 0.252 gn 0.34 rate [0.271 0.429] | 1282 sps
+it   80 steps   163840 ret    -106.2 | kl 0.0366 std 0.254 gn 0.36 rate [0.281 0.442] | 1306 sps
+it   85 steps   174080 ret    -120.2 | kl 0.0166 std 0.245 gn 0.90 rate [0.278 0.463] | 1319 sps
+it   90 steps   184320 ret     -96.5 | kl 0.0158 std 0.246 gn 0.47 rate [0.299 0.438] | 1337 sps
+it   95 steps   194560 ret    -121.5 | kl 0.0246 std 0.250 gn 0.22 rate [0.298 0.437] | 1352 sps
+it  100 steps   204800 ret     -95.2 | kl 0.0163 std 0.239 gn 0.24 rate [0.312 0.418] | 1382 sps
+it  105 steps   215040 ret     -86.5 | kl 0.0212 std 0.233 gn 0.36 rate [0.282 0.448] | 1406 sps
+it  110 steps   225280 ret     -97.5 | kl 0.0226 std 0.233 gn 0.49 rate [0.284 0.458] | 1418 sps
+it  115 steps   235520 ret     -99.2 | kl 0.0123 std 0.230 gn 0.24 rate [0.292 0.438] | 1431 sps
+it  120 steps   245760 ret     -98.3 | kl 0.0135 std 0.227 gn 0.69 rate [0.296 0.438] | 1439 sps
+it  122 steps   249856 ret    -108.0 eval     -93.8 | kl 0.0144 std 0.228 gn 0.57 rate [0.292 0.445] | 1443 sps
+it  125 steps   256000 ret     -91.4 | kl 0.0320 std 0.220 gn 0.25 rate [0.280 0.454] | 1440 sps
+it  130 steps   266240 ret     -92.8 | kl 0.0148 std 0.219 gn 0.20 rate [0.292 0.443] | 1450 sps
+it  135 steps   276480 ret    -105.6 | kl 0.0140 std 0.216 gn 0.29 rate [0.279 0.465] | 1457 sps
+it  140 steps   286720 ret     -89.2 | kl 0.0231 std 0.212 gn 0.37 rate [0.287 0.438] | 1465 sps
+it  145 steps   296960 ret     -89.7 | kl 0.0250 std 0.211 gn 0.69 rate [0.270 0.451] | 1474 sps
+it  150 steps   307200 ret     -93.5 | kl 0.0212 std 0.213 gn 0.32 rate [0.274 0.447] | 1483 sps
+it  155 steps   317440 ret     -89.8 | kl 0.0122 std 0.209 gn 0.33 rate [0.265 0.462] | 1491 sps
+it  160 steps   327680 ret     -99.0 | kl 0.0250 std 0.206 gn 0.20 rate [0.285 0.454] | 1502 sps
+it  165 steps   337920 ret    -102.5 | kl 0.0226 std 0.207 gn 0.58 rate [0.266 0.465] | 1506 sps
+it  170 steps   348160 ret     -87.8 | kl 0.0197 std 0.208 gn 0.58 rate [0.262 0.456] | 1510 sps
+it  175 steps   358400 ret     -84.7 | kl 0.0174 std 0.208 gn 0.54 rate [0.262 0.441] | 1515 sps
+it  180 steps   368640 ret     -85.7 | kl 0.0222 std 0.202 gn 0.28 rate [0.263 0.443] | 1518 sps
+it  183 steps   374784 ret     -93.4 eval     -98.2 | kl 0.0205 std 0.199 gn 0.32 rate [0.284 0.434] | 1523 sps
+it  185 steps   378880 ret     -87.9 | kl 0.0225 std 0.198 gn 0.41 rate [0.275 0.439] | 1514 sps
+it  190 steps   389120 ret     -93.5 | kl 0.0219 std 0.197 gn 0.41 rate [0.270 0.449] | 1520 sps
+it  195 steps   399360 ret     -98.7 | kl 0.0133 std 0.200 gn 0.46 rate [0.280 0.462] | 1530 sps
+it  200 steps   409600 ret     -88.0 | kl 0.0116 std 0.202 gn 0.24 rate [0.279 0.429] | 1548 sps
+it  205 steps   419840 ret     -89.4 | kl 0.0252 std 0.200 gn 0.75 rate [0.279 0.438] | 1565 sps
+it  210 steps   430080 ret     -87.0 | kl 0.0298 std 0.199 gn 0.38 rate [0.273 0.436] | 1572 sps
+it  215 steps   440320 ret     -92.8 | kl 0.0127 std 0.202 gn 0.50 rate [0.289 0.431] | 1577 sps
+it  220 steps   450560 ret     -87.5 | kl 0.0174 std 0.198 gn 0.40 rate [0.280 0.450] | 1580 sps
+it  225 steps   460800 ret     -88.7 | kl 0.0142 std 0.204 gn 0.52 rate [0.309 0.417] | 1581 sps
+it  230 steps   471040 ret     -92.8 | kl 0.0195 std 0.204 gn 0.67 rate [0.277 0.438] | 1583 sps
+it  235 steps   481280 ret     -97.7 | kl 0.0178 std 0.203 gn 0.40 rate [0.307 0.416] | 1586 sps
+it  240 steps   491520 ret     -93.0 | kl 0.0220 std 0.201 gn 0.45 rate [0.311 0.420] | 1588 sps
+it  244 steps   499712 ret     -87.2 eval     -84.5 | kl 0.0333 std 0.204 gn 0.48 rate [0.286 0.440] | 1589 sps
+it  245 steps   501760 ret     -95.0 | kl 0.0176 std 0.203 gn 0.31 rate [0.293 0.427] | 1585 sps
+it  250 steps   512000 ret     -94.6 | kl 0.0129 std 0.204 gn 0.27 rate [0.291 0.431] | 1587 sps
+it  255 steps   522240 ret    -117.7 | kl 0.0134 std 0.202 gn 0.50 rate [0.310 0.432] | 1588 sps
+it  260 steps   532480 ret     -84.2 | kl 0.0230 std 0.202 gn 0.56 rate [0.272 0.460] | 1589 sps
+it  265 steps   542720 ret     -87.5 | kl 0.0208 std 0.203 gn 0.25 rate [0.278 0.442] | 1591 sps
+it  270 steps   552960 ret     -93.5 | kl 0.0134 std 0.205 gn 0.60 rate [0.303 0.426] | 1592 sps
+it  275 steps   563200 ret     -86.8 | kl 0.0201 std 0.206 gn 0.31 rate [0.274 0.451] | 1594 sps
+it  280 steps   573440 ret     -94.3 | kl 0.0202 std 0.203 gn 0.61 rate [0.288 0.455] | 1596 sps
+it  285 steps   583680 ret     -92.0 | kl 0.0115 std 0.205 gn 0.53 rate [0.302 0.450] | 1599 sps
+it  290 steps   593920 ret     -90.7 | kl 0.0206 std 0.207 gn 1.04 rate [0.297 0.422] | 1599 sps
+it  295 steps   604160 ret     -99.2 | kl 0.0145 std 0.206 gn 0.38 rate [0.281 0.439] | 1600 sps
+it  300 steps   614400 ret     -91.2 | kl 0.0224 std 0.209 gn 0.38 rate [0.275 0.437] | 1601 sps
+it  305 steps   624640 ret     -91.8 eval     -91.8 | kl 0.0102 std 0.210 gn 0.56 rate [0.286 0.438] | 1602 sps
+it  310 steps   634880 ret     -95.0 | kl 0.0137 std 0.208 gn 0.69 rate [0.275 0.444] | 1597 sps
+it  315 steps   645120 ret     -85.5 | kl 0.0112 std 0.209 gn 0.37 rate [0.267 0.442] | 1598 sps
+it  320 steps   655360 ret     -99.5 | kl 0.0193 std 0.214 gn 0.20 rate [0.292 0.447] | 1596 sps
+it  325 steps   665600 ret     -87.8 | kl 0.0168 std 0.217 gn 0.50 rate [0.288 0.426] | 1597 sps
+it  330 steps   675840 ret     -89.8 | kl 0.0110 std 0.217 gn 0.38 rate [0.284 0.436] | 1596 sps
+it  335 steps   686080 ret     -91.0 | kl 0.0081 std 0.214 gn 0.35 rate [0.294 0.443] | 1591 sps
+it  340 steps   696320 ret     -82.8 | kl 0.0162 std 0.210 gn 0.45 rate [0.275 0.443] | 1591 sps
+it  345 steps   706560 ret     -82.0 | kl 0.0064 std 0.207 gn 0.30 rate [0.272 0.436] | 1592 sps
+it  350 steps   716800 ret     -85.0 | kl 0.0190 std 0.199 gn 0.23 rate [0.276 0.431] | 1591 sps
+it  355 steps   727040 ret     -85.8 | kl 0.0266 std 0.198 gn 1.06 rate [0.294 0.430] | 1591 sps
+it  360 steps   737280 ret     -83.0 | kl 0.0092 std 0.198 gn 0.42 rate [0.276 0.426] | 1591 sps
+it  365 steps   747520 ret     -87.8 | kl 0.0149 std 0.199 gn 0.54 rate [0.266 0.463] | 1584 sps
+it  366 steps   749568 ret     -93.3 eval     -80.9 | kl 0.0127 std 0.198 gn 0.77 rate [0.305 0.433] | 1581 sps
+it  370 steps   757760 ret     -84.3 | kl 0.0062 std 0.198 gn 0.27 rate [0.285 0.436] | 1570 sps
+it  375 steps   768000 ret     -86.4 | kl 0.0165 std 0.197 gn 0.45 rate [0.296 0.433] | 1565 sps
+it  380 steps   778240 ret    -100.6 | kl 0.0117 std 0.199 gn 0.37 rate [0.294 0.436] | 1559 sps
+it  385 steps   788480 ret     -84.5 | kl 0.0168 std 0.198 gn 0.34 rate [0.287 0.435] | 1553 sps
+it  390 steps   798720 ret     -82.5 | kl 0.0115 std 0.197 gn 0.60 rate [0.298 0.417] | 1549 sps
+it  395 steps   808960 ret     -91.0 | kl 0.0120 std 0.196 gn 0.41 rate [0.280 0.438] | 1550 sps
+it  400 steps   819200 ret     -86.2 | kl 0.0153 std 0.201 gn 0.45 rate [0.274 0.440] | 1548 sps
+it  405 steps   829440 ret     -82.5 | kl 0.0157 std 0.202 gn 0.56 rate [0.282 0.428] | 1545 sps
+it  410 steps   839680 ret     -92.7 | kl 0.0065 std 0.200 gn 0.50 rate [0.289 0.425] | 1547 sps
+it  415 steps   849920 ret     -91.4 | kl 0.0139 std 0.203 gn 0.59 rate [0.287 0.440] | 1545 sps
+it  420 steps   860160 ret     -92.7 | kl 0.0106 std 0.207 gn 0.24 rate [0.279 0.446] | 1542 sps
+it  425 steps   870400 ret     -80.8 | kl 0.0093 std 0.207 gn 0.35 rate [0.283 0.436] | 1540 sps
+it  427 steps   874496 ret     -81.3 eval     -84.2 | kl 0.0109 std 0.207 gn 0.76 rate [0.283 0.436] | 1540 sps
+it  430 steps   880640 ret    -110.7 | kl 0.0067 std 0.206 gn 0.51 rate [0.296 0.453] | 1537 sps
+it  435 steps   890880 ret     -82.8 | kl 0.0080 std 0.204 gn 0.44 rate [0.272 0.429] | 1536 sps
+it  440 steps   901120 ret     -89.3 | kl 0.0070 std 0.205 gn 0.43 rate [0.278 0.470] | 1534 sps
+it  445 steps   911360 ret     -99.8 | kl 0.0087 std 0.204 gn 0.45 rate [0.291 0.454] | 1530 sps
+it  450 steps   921600 ret     -90.7 | kl 0.0096 std 0.203 gn 0.41 rate [0.297 0.438] | 1528 sps
+it  455 steps   931840 ret     -85.7 | kl 0.0060 std 0.203 gn 0.49 rate [0.279 0.443] | 1525 sps
+it  460 steps   942080 ret     -93.8 | kl 0.0071 std 0.203 gn 0.23 rate [0.311 0.420] | 1519 sps
+it  465 steps   952320 ret     -85.0 | kl 0.0126 std 0.204 gn 0.37 rate [0.287 0.428] | 1512 sps
+it  470 steps   962560 ret     -81.8 | kl 0.0102 std 0.206 gn 0.27 rate [0.274 0.431] | 1510 sps
+it  475 steps   972800 ret     -91.3 | kl 0.0059 std 0.205 gn 0.63 rate [0.267 0.438] | 1505 sps
+it  480 steps   983040 ret     -90.7 | kl 0.0064 std 0.204 gn 0.71 rate [0.280 0.438] | 1494 sps
+it  485 steps   993280 ret     -91.8 | kl 0.0018 std 0.205 gn 0.47 rate [0.279 0.438] | 1482 sps
+it  488 steps   999424 ret     -95.0 eval     -84.7 | kl 0.0000 std 0.205 gn 0.23 rate [0.302 0.416] | 1475 sps
+final eval (20 episodios): -83.2 ± 8.7  [682 s]  -> runs/acrobot-p3-rank1-s105

@@ -1,0 +1,17 @@
+  [trial 1 seed 200001] it   15/123 steps    30720 train    -203.6 eval    -141.1
+  [trial 1 seed 200001] it   30/123 steps    61440 train    -126.6 eval     -94.1
+  [trial 1 seed 200001] it   45/123 steps    92160 train    -114.3 eval     -84.1
+  [trial 1 seed 200001] it   60/123 steps   122880 train     -97.6 eval     -87.0
+  [trial 1 seed 200001] it   75/123 steps   153600 train     -91.2 eval     -89.2
+  [trial 1 seed 200001] it   90/123 steps   184320 train     -99.7 eval     -84.8
+  [trial 1 seed 200001] it  105/123 steps   215040 train     -91.0 eval     -81.7
+  [trial 1 seed 200001] it  120/123 steps   245760 train     -85.7 eval     -88.3
+  [trial 1 seed 200001] it  123/123 steps   251904 train     -87.5 eval     -81.2
+  [trial 14 seed 200014] it   15/123 steps    30720 train    -471.5 eval    -449.3
+  [trial 18 seed 200018] it   15/123 steps    30720 train    -154.9 eval     -97.6
+  [trial 18 seed 200018] it   30/123 steps    61440 train    -101.6 eval     -95.8
+  [trial 18 seed 200018] it   45/123 steps    92160 train    -114.0 eval    -134.5
+  [trial 18 seed 200018] it   60/123 steps   122880 train     -96.5 eval     -90.3
+  [trial 18 seed 200018] it   75/123 steps   153600 train    -101.5 eval     -84.2
+  [trial 18 seed 200018] it   90/123 steps   184320 train     -85.8 eval     -84.9
+  [trial 18 seed 200018] it  105/123 steps   215040 train     -96.2 eval     -98.0
