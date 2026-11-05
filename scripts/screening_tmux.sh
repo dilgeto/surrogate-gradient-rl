@@ -1,8 +1,9 @@
 #!/bin/bash
 # Lanza las búsquedas estilo wann-cpp EN PARALELO, cada una en su propia ventana de tmux.
-#   scripts/screening_tmux.sh [todo|conexiones|neuronas]     (por defecto: todo = las 6 a la vez)
+#   scripts/screening_tmux.sh [todo|conexiones|neuronas|64x64]     (por defecto: todo = las 6 de conexiones y neuronas a la vez)
 # Ventanas: con-mountaincar, con-acrobot, con-carrace (red con las conexiones de wann-cpp, resultados en screening/ y runs/)
 #           neu-mountaincar, neu-acrobot, neu-carrace (red con las neuronas de wann-cpp, en screening_neuronas/ y runs_neuronas/)
+#           64-mountaincar, 64-acrobot, 64-carrace (red 64x64 del preset, en screening_64x64/ y runs_64x64/; sólo con `64x64`, no entra en `todo`)
 # Entrar: tmux attach -t screening   (Ctrl-b w: lista de ventanas; Ctrl-b d: salir sin parar nada)
 #
 # Reparte las hebras de la máquina entre las búsquedas lanzadas: procesos por búsqueda = hebras / nº de búsquedas, con tope
@@ -14,7 +15,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 source scripts/_screening_nets.sh
 VARIANT="${1:-todo}"; SESSION="${SESSION:-screening}"; N2="${N2:-40}"
-case "$VARIANT" in todo|conexiones|neuronas) ;; *) echo "uso: $0 [todo|conexiones|neuronas]" >&2; exit 1 ;; esac
+case "$VARIANT" in todo|conexiones|neuronas|64x64) ;; *) echo "uso: $0 [todo|conexiones|neuronas|64x64]" >&2; exit 1 ;; esac
 [ -f .venv/bin/activate ] && . .venv/bin/activate
 python scripts/check_env.py --quiet || { echo "!! el entorno no está listo (ver arriba); no lanzo nada" >&2; exit 1; }
 [ -n "${DRY:-}" ] || command -v tmux > /dev/null || { echo "!! tmux no está instalado" >&2; exit 1; }
@@ -24,15 +25,20 @@ add() {  # <prefijo> <script> <hidden> <screening> <runs>
   local lab="${2#screening_}"; lab="${lab%.sh}"
   entries+=("$1-$lab|$2|$4|$5|$3")
 }
-if [ "$VARIANT" != neuronas ]; then
+if [ "$VARIANT" = todo ] || [ "$VARIANT" = conexiones ]; then
   add con screening_mountaincar.sh "$HID_CON_MC" screening runs
   add con screening_acrobot.sh "$HID_CON_ACROBOT" screening runs
   add con screening_carrace.sh "$HID_CON_CAR" screening runs
 fi
-if [ "$VARIANT" != conexiones ]; then
+if [ "$VARIANT" = todo ] || [ "$VARIANT" = neuronas ]; then
   add neu screening_mountaincar.sh "$HID_NEU_MC" screening_neuronas runs_neuronas
   add neu screening_acrobot.sh "$HID_NEU_ACROBOT" screening_neuronas runs_neuronas
   add neu screening_carrace.sh "$HID_NEU_CAR" screening_neuronas runs_neuronas
+fi
+if [ "$VARIANT" = 64x64 ]; then
+  add 64 screening_mountaincar.sh "$HID_64_MC" screening_64x64 runs_64x64
+  add 64 screening_acrobot.sh "$HID_64_ACROBOT" screening_64x64 runs_64x64
+  add 64 screening_carrace.sh "$HID_64_CAR" screening_64x64 runs_64x64
 fi
 R=${#entries[@]}
 

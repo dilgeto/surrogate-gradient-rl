@@ -129,6 +129,9 @@ Tareas: `acrobot`, `disc_mc` (MountainCarDiscrete), `car` (CarTrack). Resultados
 las tres tareas una tras otra con redes totalmente conectadas de tantas conexiones como la red de wann-cpp de cada tarea.
 `scripts/screening_tmux.sh [todo|conexiones|neuronas]` lanza las búsquedas EN PARALELO, una por ventana de tmux (las 6 a la vez con
 `todo`: tres tareas x las dos variantes de red), repartiendo las hebras y comprobando la RAM antes de empezar.
+La variante `64x64` (`scripts/screening_tmux.sh 64x64`, o una tras otra con `scripts/screening_all_64.sh`) hace la misma búsqueda con la red
+del preset (64x64, sin ajustarla a wann-cpp) y guarda en `screening_64x64/` y `runs_64x64/`; no entra en `todo`. Es independiente de
+`runs_default/`, que sale de la búsqueda con Optuna.
 
 ## Ruido de memristores
 

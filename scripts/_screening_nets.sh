@@ -3,3 +3,5 @@
 HID_CON_MC="14 3"; HID_CON_ACROBOT="4 4"; HID_CON_CAR="3 2"
 # Por NEURONAS: tantas como los nodos de la red de wann-cpp sin su sesgo (CarTrack 26, Acrobot 34, MountainCar 36).
 HID_NEU_MC="16 15"; HID_NEU_ACROBOT="14 13"; HID_NEU_CAR="8 7"
+# Por DEFECTO (64x64): el tamaño del preset, sin ajustarlo a la red de wann-cpp.
+HID_64_MC="64 64"; HID_64_ACROBOT="64 64"; HID_64_CAR="64 64"
