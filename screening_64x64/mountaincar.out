@@ -1,0 +1,130 @@
+tarea disc_mc · base: --device cpu --threads 1 --env MountainCarDiscrete --reward-shaping 10 --steps 500000 --sim-steps 20 --hidden 64 64
+  se buscan 12 parámetros; fijos (no se buscan): {'sim_steps': 20}
+
+== disc_mc · fase 1 (reducción) · 4 rondas x 30 trials · fidelidad 25% (125,000 de 500,000 pasos) · 10 procesos ==
+
+Ronda 0 · espacio:
+    actor_lr        [0.0001, 0.01]  (log)
+    critic_lr       [0.0001, 0.01]  (log)
+    ent_coef        [1e-05, 0.2]  (log)
+    minibatch       [7, 12]  (pow2, 2**k)
+    epochs          [2, 15]  (int)
+    beta            [0.5, 0.99]  (float)
+    alpha           [5, 100]  (log)
+    in_gain_scale   [0.25, 4]  (log)
+    hid_gain_scale  [0.25, 4]  (log)
+    gae_lambda      [0.9, 0.99]  (float)
+    init_std        [0.2, 1]  (float)
+    gamma           [0.9, 0.999]  (float)
+2026-11-05 12:35:55 · r0 · trial 6 · valor -126.7 · mejor -126.7 · {actor_lr: 0.0003841, critic_lr: 0.009432, ent_coef: 0.0604, minibatch: 512, epochs: 2, beta: 0.56, alpha: 36.99, in_gain_scale: 0.7624, hid_gain_scale: 0.2859, gae_lambda: 0.97, init_std: 0.47, gamma: 0.947}
+2026-11-05 12:36:08 · r0 · trial 5 · valor -172.3 · mejor -126.7 · {actor_lr: 0.000129, critic_lr: 0.00989, ent_coef: 0.01466, minibatch: 4096, epochs: 11, beta: 0.62, alpha: 6.175, in_gain_scale: 2.946, hid_gain_scale: 1.302, gae_lambda: 0.96, init_std: 0.51, gamma: 0.92}
+2026-11-05 12:36:10 · r0 · trial 0 · valor -110.7 · mejor -110.7 · {actor_lr: 0.001252, critic_lr: 0.002694, ent_coef: 0.003913, minibatch: 1024, epochs: 7, beta: 0.82, alpha: 18.55, in_gain_scale: 2.963, hid_gain_scale: 3.617, gae_lambda: 0.93, init_std: 0.84, gamma: 0.952}
+2026-11-05 12:36:38 · r0 · trial 1 · valor -119 · mejor -110.7 · {actor_lr: 0.001384, critic_lr: 0.001346, ent_coef: 0.001261, minibatch: 512, epochs: 7, beta: 0.76, alpha: 6.132, in_gain_scale: 1.264, hid_gain_scale: 0.4835, gae_lambda: 0.91, init_std: 0.32, gamma: 0.912}
+2026-11-05 12:36:49 · r0 · trial 3 · valor -103.5 · mejor -103.5 · {actor_lr: 0.002078, critic_lr: 0.004881, ent_coef: 4.681e-05, minibatch: 256, epochs: 11, beta: 0.57, alpha: 34.1, in_gain_scale: 0.863, hid_gain_scale: 2.225, gae_lambda: 0.94, init_std: 0.86, gamma: 0.996}
+2026-11-05 12:37:07 · r0 · trial 2 · valor -113.1 · mejor -103.5 · {actor_lr: 0.0004602, critic_lr: 0.0001714, ent_coef: 0.01231, minibatch: 256, epochs: 12, beta: 0.77, alpha: 11.06, in_gain_scale: 0.785, hid_gain_scale: 0.3354, gae_lambda: 0.97, init_std: 0.75, gamma: 0.94}
+2026-11-05 12:37:23 · r0 · trial 12 · valor -110.5 · mejor -103.5 · {actor_lr: 0.001368, critic_lr: 0.007099, ent_coef: 2.021e-05, minibatch: 128, epochs: 2, beta: 0.91, alpha: 51.45, in_gain_scale: 2.79, hid_gain_scale: 3.77, gae_lambda: 0.97, init_std: 0.57, gamma: 0.978}
+2026-11-05 12:38:39 · r0 · trial 22 · valor -122.9 · mejor -103.5 · {actor_lr: 0.003464, critic_lr: 0.006938, ent_coef: 4.985e-05, minibatch: 512, epochs: 12, beta: 0.51, alpha: 60.31, in_gain_scale: 0.2991, hid_gain_scale: 0.7874, gae_lambda: 0.93, init_std: 0.92, gamma: 0.969}
+2026-11-05 12:38:40 · r0 · trial 13 · valor -107.4 · mejor -103.5 · {actor_lr: 0.000198, critic_lr: 0.004818, ent_coef: 0.0001759, minibatch: 256, epochs: 11, beta: 0.67, alpha: 88.29, in_gain_scale: 0.5701, hid_gain_scale: 0.7509, gae_lambda: 0.94, init_std: 0.43, gamma: 0.989}
+  r0: 9 completos, 21 podados, 0 fallidos · mejor -103.5
+
+── Espacio tras la ronda 0 (K=5 tramos, α=0.05) ──
+  Ningún tramo eliminado: converge en la ronda 0.
+
+== disc_mc · fase 2 · 40 trials a presupuesto completo (500,000 pasos) · 10 procesos ==
+  espacio: ronda 0 de space_log.jsonl
+    actor_lr        [0.0001, 0.01]  (log)
+    critic_lr       [0.0001, 0.01]  (log)
+    ent_coef        [1e-05, 0.2]  (log)
+    minibatch       [7, 12]  (pow2, 2**k)
+    epochs          [2, 15]  (int)
+    beta            [0.5, 0.99]  (float)
+    alpha           [5, 100]  (log)
+    in_gain_scale   [0.25, 4]  (log)
+    hid_gain_scale  [0.25, 4]  (log)
+    gae_lambda      [0.9, 0.99]  (float)
+    init_std        [0.2, 1]  (float)
+    gamma           [0.9, 0.999]  (float)
+2026-11-05 12:42:21 · p2 · trial 4 · valor -114.8 · mejor -114.8 · {actor_lr: 0.0003841, critic_lr: 0.009432, ent_coef: 0.0604, minibatch: 512, epochs: 2, beta: 0.56, alpha: 36.99, in_gain_scale: 0.7624, hid_gain_scale: 0.2859, gae_lambda: 0.97, init_std: 0.47, gamma: 0.947}
+2026-11-05 12:43:23 · p2 · trial 1 · valor -109.7 · mejor -109.7 · {actor_lr: 0.001252, critic_lr: 0.002694, ent_coef: 0.003913, minibatch: 1024, epochs: 7, beta: 0.82, alpha: 18.55, in_gain_scale: 2.963, hid_gain_scale: 3.617, gae_lambda: 0.93, init_std: 0.84, gamma: 0.952}
+2026-11-05 12:43:32 · p2 · trial 0 · valor -115.2 · mejor -109.7 · {actor_lr: 0.001384, critic_lr: 0.001346, ent_coef: 0.001261, minibatch: 512, epochs: 7, beta: 0.76, alpha: 6.132, in_gain_scale: 1.264, hid_gain_scale: 0.4835, gae_lambda: 0.91, init_std: 0.32, gamma: 0.912}
+2026-11-05 12:43:54 · p2 · trial 2 · valor -119.4 · mejor -109.7 · {actor_lr: 0.000129, critic_lr: 0.00989, ent_coef: 0.01466, minibatch: 4096, epochs: 11, beta: 0.62, alpha: 6.175, in_gain_scale: 2.946, hid_gain_scale: 1.302, gae_lambda: 0.96, init_std: 0.51, gamma: 0.92}
+2026-11-05 12:45:11 · p2 · trial 9 · valor -112.4 · mejor -109.7 · {actor_lr: 0.005192, critic_lr: 0.007678, ent_coef: 0.0006199, minibatch: 128, epochs: 6, beta: 0.97, alpha: 73.99, in_gain_scale: 0.6379, hid_gain_scale: 0.7426, gae_lambda: 0.98, init_std: 0.4, gamma: 0.997}
+2026-11-05 12:45:33 · p2 · trial 6 · valor -107.3 · mejor -107.3 · {actor_lr: 0.001051, critic_lr: 0.001483, ent_coef: 0.01146, minibatch: 256, epochs: 9, beta: 0.86, alpha: 62.33, in_gain_scale: 0.3816, hid_gain_scale: 1.094, gae_lambda: 0.95, init_std: 0.57, gamma: 0.959}
+2026-11-05 12:45:50 · p2 · trial 10 · valor -133.7 · mejor -107.3 · {actor_lr: 0.0001605, critic_lr: 0.000252, ent_coef: 0.002529, minibatch: 2048, epochs: 5, beta: 0.88, alpha: 83.67, in_gain_scale: 0.6895, hid_gain_scale: 0.3368, gae_lambda: 0.97, init_std: 0.28, gamma: 0.963}
+2026-11-05 12:45:53 · p2 · trial 8 · valor -108.9 · mejor -107.3 · {actor_lr: 0.002029, critic_lr: 0.0001698, ent_coef: 0.1222, minibatch: 512, epochs: 14, beta: 0.6, alpha: 5.649, in_gain_scale: 0.752, hid_gain_scale: 0.4772, gae_lambda: 0.98, init_std: 0.36, gamma: 0.974}
+2026-11-05 12:46:27 · p2 · trial 3 · valor -122.2 · mejor -107.3 · {actor_lr: 0.0004602, critic_lr: 0.0001714, ent_coef: 0.01231, minibatch: 256, epochs: 12, beta: 0.77, alpha: 11.06, in_gain_scale: 0.785, hid_gain_scale: 0.3354, gae_lambda: 0.97, init_std: 0.75, gamma: 0.94}
+2026-11-05 12:46:28 · p2 · trial 7 · valor -200 · mejor -107.3 · {actor_lr: 0.002078, critic_lr: 0.004881, ent_coef: 4.681e-05, minibatch: 256, epochs: 11, beta: 0.57, alpha: 34.1, in_gain_scale: 0.863, hid_gain_scale: 2.225, gae_lambda: 0.94, init_std: 0.86, gamma: 0.996}
+2026-11-05 12:46:43 · p2 · trial 12 · valor -138 · mejor -107.3 · {actor_lr: 0.0004517, critic_lr: 0.002445, ent_coef: 0.0003499, minibatch: 4096, epochs: 4, beta: 0.55, alpha: 24.28, in_gain_scale: 2.771, hid_gain_scale: 0.5167, gae_lambda: 0.94, init_std: 0.54, gamma: 0.953}
+2026-11-05 12:47:08 · p2 · trial 11 · valor -105.2 · mejor -105.2 · {actor_lr: 0.001368, critic_lr: 0.007099, ent_coef: 2.021e-05, minibatch: 128, epochs: 2, beta: 0.91, alpha: 51.45, in_gain_scale: 2.79, hid_gain_scale: 3.77, gae_lambda: 0.97, init_std: 0.57, gamma: 0.978}
+2026-11-05 12:49:25 · p2 · trial 14 · valor -135.8 · mejor -105.2 · {actor_lr: 0.005554, critic_lr: 0.0002217, ent_coef: 1.185e-05, minibatch: 1024, epochs: 5, beta: 0.53, alpha: 7.789, in_gain_scale: 3.486, hid_gain_scale: 0.7851, gae_lambda: 0.99, init_std: 0.66, gamma: 0.927}
+2026-11-05 12:50:58 · p2 · trial 13 · valor -139.7 · mejor -105.2 · {actor_lr: 0.0001752, critic_lr: 0.001448, ent_coef: 0.002362, minibatch: 4096, epochs: 14, beta: 0.72, alpha: 17.21, in_gain_scale: 2.602, hid_gain_scale: 2.116, gae_lambda: 0.95, init_std: 0.93, gamma: 0.934}
+2026-11-05 12:52:06 · p2 · trial 5 · valor -104.4 · mejor -104.4 · {actor_lr: 0.0002871, critic_lr: 0.0005264, ent_coef: 0.01348, minibatch: 128, epochs: 10, beta: 0.9, alpha: 94.54, in_gain_scale: 0.2983, hid_gain_scale: 2.297, gae_lambda: 0.9, init_std: 0.52, gamma: 0.966}
+2026-11-05 12:54:16 · p2 · trial 22 · valor -103.3 · mejor -103.3 · {actor_lr: 0.0004091, critic_lr: 0.006741, ent_coef: 0.08505, minibatch: 128, epochs: 2, beta: 0.93, alpha: 48.06, in_gain_scale: 1.298, hid_gain_scale: 2.05, gae_lambda: 0.97, init_std: 0.46, gamma: 0.984}
+2026-11-05 12:56:09 · p2 · trial 20 · valor -97.43 · mejor -97.43 · {actor_lr: 0.002666, critic_lr: 0.00104, ent_coef: 0.03653, minibatch: 512, epochs: 12, beta: 0.64, alpha: 86.57, in_gain_scale: 0.2918, hid_gain_scale: 0.6016, gae_lambda: 0.98, init_std: 0.36, gamma: 0.985}
+2026-11-05 12:57:34 · p2 · trial 21 · valor -117.5 · mejor -97.43 · {actor_lr: 0.001351, critic_lr: 0.0002956, ent_coef: 0.1304, minibatch: 512, epochs: 12, beta: 0.54, alpha: 75.11, in_gain_scale: 0.6103, hid_gain_scale: 1.385, gae_lambda: 0.99, init_std: 0.22, gamma: 0.961}
+2026-11-05 12:58:45 · p2 · trial 16 · valor -97.73 · mejor -97.43 · {actor_lr: 0.000198, critic_lr: 0.004818, ent_coef: 0.0001759, minibatch: 256, epochs: 11, beta: 0.67, alpha: 88.29, in_gain_scale: 0.5701, hid_gain_scale: 0.7509, gae_lambda: 0.94, init_std: 0.43, gamma: 0.989}
+2026-11-05 12:59:33 · p2 · trial 23 · valor -100.6 · mejor -97.43 · {actor_lr: 0.002049, critic_lr: 0.007528, ent_coef: 0.002306, minibatch: 128, epochs: 5, beta: 0.9, alpha: 60.4, in_gain_scale: 2.105, hid_gain_scale: 3.167, gae_lambda: 0.98, init_std: 0.41, gamma: 0.975}
+2026-11-05 13:00:15 · p2 · trial 24 · valor -121.2 · mejor -97.43 · {actor_lr: 0.0006256, critic_lr: 0.0008997, ent_coef: 2.078e-05, minibatch: 256, epochs: 6, beta: 0.93, alpha: 67.27, in_gain_scale: 2.878, hid_gain_scale: 1.018, gae_lambda: 0.98, init_std: 0.58, gamma: 0.973}
+2026-11-05 13:00:20 · p2 · trial 15 · valor -115.5 · mejor -97.43 · {actor_lr: 0.0001609, critic_lr: 0.004239, ent_coef: 2.045e-05, minibatch: 256, epochs: 14, beta: 0.92, alpha: 13.71, in_gain_scale: 0.7387, hid_gain_scale: 1.522, gae_lambda: 0.96, init_std: 0.58, gamma: 0.953}
+2026-11-05 13:01:14 · p2 · trial 27 · valor -108.6 · mejor -97.43 · {actor_lr: 0.002195, critic_lr: 0.000827, ent_coef: 0.1104, minibatch: 1024, epochs: 5, beta: 0.73, alpha: 58.76, in_gain_scale: 0.8201, hid_gain_scale: 0.7069, gae_lambda: 0.97, init_std: 0.24, gamma: 0.995}
+2026-11-05 13:03:07 · p2 · trial 26 · valor -138.8 · mejor -97.43 · {actor_lr: 0.0001287, critic_lr: 0.000106, ent_coef: 0.05486, minibatch: 128, epochs: 5, beta: 0.95, alpha: 73.1, in_gain_scale: 0.3213, hid_gain_scale: 2.498, gae_lambda: 0.94, init_std: 0.41, gamma: 0.974}
+2026-11-05 13:04:00 · p2 · trial 17 · valor -107 · mejor -97.43 · {actor_lr: 0.0006086, critic_lr: 0.0002315, ent_coef: 0.01578, minibatch: 128, epochs: 14, beta: 0.97, alpha: 81.36, in_gain_scale: 0.791, hid_gain_scale: 0.2709, gae_lambda: 0.99, init_std: 0.47, gamma: 0.97}
+2026-11-05 13:05:22 · p2 · trial 25 · valor -99.2 · mejor -97.43 · {actor_lr: 0.0006549, critic_lr: 0.004079, ent_coef: 2.297e-05, minibatch: 128, epochs: 7, beta: 0.84, alpha: 53.98, in_gain_scale: 3.01, hid_gain_scale: 2.159, gae_lambda: 0.95, init_std: 0.58, gamma: 0.984}
+2026-11-05 13:06:17 · p2 · trial 29 · valor -108.8 · mejor -97.43 · {actor_lr: 0.0008122, critic_lr: 0.001613, ent_coef: 0.006588, minibatch: 2048, epochs: 13, beta: 0.66, alpha: 72.96, in_gain_scale: 0.2621, hid_gain_scale: 0.5049, gae_lambda: 0.94, init_std: 0.38, gamma: 0.996}
+2026-11-05 13:07:25 · p2 · trial 19 · valor -97.27 · mejor -97.27 · {actor_lr: 0.0002524, critic_lr: 0.002094, ent_coef: 0.01415, minibatch: 128, epochs: 13, beta: 0.94, alpha: 20.06, in_gain_scale: 0.442, hid_gain_scale: 1.966, gae_lambda: 0.93, init_std: 0.55, gamma: 0.989}
+2026-11-05 13:09:33 · p2 · trial 30 · valor -101.1 · mejor -97.27 · {actor_lr: 0.00145, critic_lr: 0.0003882, ent_coef: 0.08358, minibatch: 512, epochs: 11, beta: 0.61, alpha: 99.28, in_gain_scale: 0.2993, hid_gain_scale: 0.4761, gae_lambda: 0.95, init_std: 0.2, gamma: 0.984}
+2026-11-05 13:09:45 · p2 · trial 34 · valor -102.8 · mejor -97.27 · {actor_lr: 0.001323, critic_lr: 0.0007152, ent_coef: 0.1636, minibatch: 512, epochs: 10, beta: 0.62, alpha: 78.16, in_gain_scale: 0.766, hid_gain_scale: 0.604, gae_lambda: 0.95, init_std: 0.37, gamma: 0.979}
+2026-11-05 13:10:16 · p2 · trial 28 · valor -99.87 · mejor -97.27 · {actor_lr: 0.000588, critic_lr: 0.001895, ent_coef: 0.06222, minibatch: 512, epochs: 15, beta: 0.8, alpha: 89.06, in_gain_scale: 0.4683, hid_gain_scale: 0.4933, gae_lambda: 0.99, init_std: 0.48, gamma: 0.98}
+2026-11-05 13:12:21 · p2 · trial 35 · valor -99.83 · mejor -97.27 · {actor_lr: 0.003757, critic_lr: 0.002944, ent_coef: 0.001383, minibatch: 512, epochs: 13, beta: 0.59, alpha: 51.37, in_gain_scale: 0.5261, hid_gain_scale: 0.4638, gae_lambda: 0.93, init_std: 0.33, gamma: 0.995}
+2026-11-05 13:12:22 · p2 · trial 33 · valor -98.3 · mejor -97.27 · {actor_lr: 0.003167, critic_lr: 0.005595, ent_coef: 0.0002414, minibatch: 128, epochs: 6, beta: 0.89, alpha: 31.44, in_gain_scale: 3.314, hid_gain_scale: 1.539, gae_lambda: 0.99, init_std: 0.45, gamma: 0.978}
+2026-11-05 13:12:25 · p2 · trial 32 · valor -99.3 · mejor -97.27 · {actor_lr: 0.003431, critic_lr: 0.0008146, ent_coef: 0.1064, minibatch: 256, epochs: 13, beta: 0.7, alpha: 38.72, in_gain_scale: 0.3534, hid_gain_scale: 0.7686, gae_lambda: 0.96, init_std: 0.3, gamma: 0.983}
+2026-11-05 13:13:40 · p2 · trial 31 · valor -99 · mejor -97.27 · {actor_lr: 0.001793, critic_lr: 0.002792, ent_coef: 0.001375, minibatch: 256, epochs: 14, beta: 0.67, alpha: 59.75, in_gain_scale: 0.2611, hid_gain_scale: 0.5626, gae_lambda: 0.95, init_std: 0.45, gamma: 0.982}
+2026-11-05 13:14:30 · p2 · trial 36 · valor -121.4 · mejor -97.27 · {actor_lr: 0.006271, critic_lr: 0.0002099, ent_coef: 0.03635, minibatch: 512, epochs: 10, beta: 0.67, alpha: 78.95, in_gain_scale: 0.2623, hid_gain_scale: 0.7208, gae_lambda: 0.99, init_std: 0.46, gamma: 0.959}
+2026-11-05 13:17:05 · p2 · trial 37 · valor -99.5 · mejor -97.27 · {actor_lr: 0.002102, critic_lr: 0.001001, ent_coef: 0.01058, minibatch: 128, epochs: 13, beta: 0.51, alpha: 64.14, in_gain_scale: 0.3238, hid_gain_scale: 0.6445, gae_lambda: 0.97, init_std: 0.39, gamma: 0.99}
+2026-11-05 13:21:52 · p2 · trial 39 · valor -100.2 · mejor -97.27 · {actor_lr: 0.0001943, critic_lr: 0.002143, ent_coef: 0.09175, minibatch: 256, epochs: 11, beta: 0.55, alpha: 21.93, in_gain_scale: 0.2691, hid_gain_scale: 0.9721, gae_lambda: 0.96, init_std: 0.56, gamma: 0.984}
+2026-11-05 13:23:45 · p2 · trial 38 · valor -99.93 · mejor -97.27 · {actor_lr: 0.0003097, critic_lr: 0.007165, ent_coef: 0.001013, minibatch: 128, epochs: 11, beta: 0.75, alpha: 64.72, in_gain_scale: 0.3853, hid_gain_scale: 0.7116, gae_lambda: 0.96, init_std: 0.33, gamma: 0.991}
+  p2: 39 completos, 1 podados, 0 fallidos · mejor -97.27
+  mejores:
+    trial  19  valor    -97.27  actor_lr=0.0002524 critic_lr=0.002094 ent_coef=0.01415 minibatch=128 epochs=13 beta=0.94 alpha=20.06 in_gain_scale=0.442 hid_gain_scale=1.966 gae_lambda=0.93 init_std=0.55 gamma=0.989
+    trial  20  valor    -97.43  actor_lr=0.002666 critic_lr=0.00104 ent_coef=0.03653 minibatch=512 epochs=12 beta=0.64 alpha=86.57 in_gain_scale=0.2918 hid_gain_scale=0.6016 gae_lambda=0.98 init_std=0.36 gamma=0.985
+    trial  16  valor    -97.73  actor_lr=0.000198 critic_lr=0.004818 ent_coef=0.0001759 minibatch=256 epochs=11 beta=0.67 alpha=88.29 in_gain_scale=0.5701 hid_gain_scale=0.7509 gae_lambda=0.94 init_std=0.43 gamma=0.989
+    trial  33  valor     -98.3  actor_lr=0.003167 critic_lr=0.005595 ent_coef=0.0002414 minibatch=128 epochs=6 beta=0.89 alpha=31.44 in_gain_scale=3.314 hid_gain_scale=1.539 gae_lambda=0.99 init_std=0.45 gamma=0.978
+    trial  31  valor       -99  actor_lr=0.001793 critic_lr=0.002792 ent_coef=0.001375 minibatch=256 epochs=14 beta=0.67 alpha=59.75 in_gain_scale=0.2611 hid_gain_scale=0.5626 gae_lambda=0.95 init_std=0.45 gamma=0.982
+
+== disc_mc · fase 3 · top 3 x 11 semillas = 33 corridas, 33 a la vez ==
+  [1/33] disc_mc-p3-rank1-s107: -96.5
+  [2/33] disc_mc-p3-rank2-s107: -97.3
+  [3/33] disc_mc-p3-rank2-s100: -96.2
+  [4/33] disc_mc-p3-rank1-s106: -97.7
+  [5/33] disc_mc-p3-rank1-s102: -97.0
+  [6/33] disc_mc-p3-rank1-s105: -97.1
+  [7/33] disc_mc-p3-rank1-s109: -96.2
+  [8/33] disc_mc-p3-rank1-s100: -95.8
+  [9/33] disc_mc-p3-rank1-s103: -96.5
+  [10/33] disc_mc-p3-rank1-s104: -96.9
+  [11/33] disc_mc-p3-rank1-s108: -96.6
+  [12/33] disc_mc-p3-rank2-s104: -96.8
+  [13/33] disc_mc-p3-rank2-s106: -97.0
+  [14/33] disc_mc-p3-rank1-s101: -95.9
+  [15/33] disc_mc-p3-rank1-s110: -96.5
+  [16/33] disc_mc-p3-rank2-s105: -96.8
+  [17/33] disc_mc-p3-rank2-s103: -96.0
+  [18/33] disc_mc-p3-rank2-s110: -96.2
+  [19/33] disc_mc-p3-rank2-s102: -97.2
+  [20/33] disc_mc-p3-rank2-s108: -101.5
+  [21/33] disc_mc-p3-rank0-s110: -96.3
+  [22/33] disc_mc-p3-rank2-s101: -97.8
+  [23/33] disc_mc-p3-rank2-s109: -96.5
+  [24/33] disc_mc-p3-rank0-s105: -97.9
+  [25/33] disc_mc-p3-rank0-s103: -96.1
+  [26/33] disc_mc-p3-rank0-s102: -97.1
+  [27/33] disc_mc-p3-rank0-s107: -97.5
+  [28/33] disc_mc-p3-rank0-s108: -97.0
+  [29/33] disc_mc-p3-rank0-s100: -95.4
+  [30/33] disc_mc-p3-rank0-s104: -97.1
+  [31/33] disc_mc-p3-rank0-s101: -96.0
+  [32/33] disc_mc-p3-rank0-s106: -97.2
+  [33/33] disc_mc-p3-rank0-s109: -96.7
+rank 0 (trial 19): fase 2 -97.3 -> validación -96.7 ± 0.7 (11/11 semillas)
+rank 1 (trial 20): fase 2 -97.4 -> validación -96.6 ± 0.5 (11/11 semillas)
+rank 2 (trial 16): fase 2 -97.7 -> validación -97.2 ± 1.4 (11/11 semillas)

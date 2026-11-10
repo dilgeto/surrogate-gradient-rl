@@ -1,0 +1,11 @@
+  [trial 8 seed 8] it   30/245 steps   122880 train     101.8 eval      37.7
+  [trial 8 seed 8] it   60/245 steps   245760 train      94.6 eval      43.0
+  [trial 8 seed 8] it   90/245 steps   368640 train      84.8 eval      42.4
+  [trial 8 seed 8] it  120/245 steps   491520 train     110.2 eval      43.4
+  [trial 8 seed 8] it  150/245 steps   614400 train      76.9 eval      43.7
+  [trial 8 seed 8] it  180/245 steps   737280 train     105.2 eval      43.1
+  [trial 14 seed 14] it   30/245 steps   122880 train      44.8 eval      33.6
+  [trial 19 seed 19] it   30/245 steps   122880 train      83.2 eval     115.7
+  [trial 19 seed 19] it   60/245 steps   245760 train      96.7 eval     130.4
+  [trial 19 seed 19] it   90/245 steps   368640 train     139.2 eval     151.0
+  [trial 19 seed 19] it  120/245 steps   491520 train     188.2 eval     162.8

@@ -1,0 +1,1 @@
+--device cpu --threads 1 --env Acrobot --reward-shaping 10 --sim-steps 20 --hidden 64 64
